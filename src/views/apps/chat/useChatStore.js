@@ -116,14 +116,14 @@ export const useChatStore = defineStore("chat", {
           senderId: 1,
           receiverId: 2,
         },
-        {
+/*        {
           id: Math.floor(Math.random() * 1000),
           type: "basic",
           text: "Nema na čemu, tu smo da vam pomognemo.",
           createdAt: new Date(),
           senderId: 1,
           receiverId: 2,
-        },
+        },*/
         {
           id: Math.floor(Math.random() * 1000),
           type: "basic",
@@ -259,21 +259,23 @@ export const useChatStore = defineStore("chat", {
 
       if (this.counter === 4) {
         newMessages.push(messages[5]);
+        newMessages.push(messages[6]);
       }
 
       // Drugi screen
       if (this.counter === 5) {
-        newMessages.push(messages[6]);
         newMessages.push(messages[7]);
+          newMessages.push(messages[8]);
       }
 
       if (this.counter === 6) {
-        newMessages.push(messages[8]);
+
         newMessages.push(messages[9]);
+          newMessages.push(messages[10]);
       }
 
       if (this.counter === 7) {
-        newMessages.push(messages[10]);
+
         newMessages.push(messages[11]);
       }
 
@@ -404,7 +406,7 @@ export const useChatStore = defineStore("chat", {
       //     newMessages.push({
       //       id: Math.floor(Math.random() * 1000),
       //       type: "basic",
-      //       text: "Naš spa centar obiluje sadržajima, koji su besplatni za goste hotela.\n\nNaš spa centar sadrži 3 tipa saune, tursko kupatilo, zatvoreni bazen, otvoreni bazen, tepidarijum, kao i sobu neverovatno dobrom atmosferom namenjenoj za masaže. Klinite na neki od sadržaja dole kako bi ste saznali više o tome.",
+      //       text: "Naš spa centar obiluje sadržajima, koji su besplatni za goste hotela.\n\nNaš spa centar sadrži 3 tipa saune, tursko kupatilo, zatvoreni bazen, otvoreni bazen, tepidarijum, kao i sobu sa neverovatno dobrom atmosferom namenjenoj za masaže. \n\n Klinite na neki od sadržaja dole kako bi ste saznali više o tome.",
       //       createdAt: new Date(),
       //       senderId: 1,
       //       receiverId: 2,
