@@ -1,5 +1,5 @@
 import DeluksSoba from "@/assets/images/property/deluks-soba.png";
-import KomfortDvokrevetnaSoba from "@/assets/images/property/komfort-dvokrevetna-soba.jpg";
+import DeluxSobaSaGalerijom from "@/assets/images/property/delux-soba-sa-galerijom.jpg";
 import PremiumPorodicnaSoba from "@/assets/images/property/premium-porodicna-soba.png";
 import Saune from "@/assets/images/property/saune.png";
 import SuperiorDvokrevetnaSoba from "@/assets/images/property/superior-dvokrevetna-soba.png";
@@ -100,11 +100,11 @@ export const useChatStore = defineStore("chat", {
             },
             {
               id: 3,
-              link: "komfort-dvokrevetna-soba",
-              title: "Komfort dvokrevetna soba",
-              subtitle: "Pogled na bazen",
+              link: "delux-soba-sa-galerijom",
+              title: "Delux soba sa galerijom",
+              subtitle: "Jedinstvena, komforna, moderna",
               tag: "Pogled na bazen",
-              image: KomfortDvokrevetnaSoba,
+              image: DeluxSobaSaGalerijom,
             },
           ],
         },
@@ -510,7 +510,7 @@ export const useChatStore = defineStore("chat", {
       setTimeout(() => {
         this.activeChat.messages = this.activeChat.messages.concat(newMessages);
         this.loading = false;
-      }, 2);
+      }, 2000);
     },
     async setCounter(counter) {
       this.counter = counter;
