@@ -1,5 +1,6 @@
 <script setup>
 import Avatar from "@/assets/images/avatars/avatar-1.png";
+import DeluksSoba from "@/assets/images/property/deluks-soba.png";
 import { useChatStore } from "@/views/apps/chat/useChatStore";
 import { computed, nextTick, ref, watch } from "vue";
 import { Carousel, Navigation, Slide } from "vue3-carousel";
@@ -36,16 +37,6 @@ const handleSendMessageFromChoice = (message) => {
   emit("send-message", message);
 };
 
-const handleCardClick = (item) => {
-  if (item.title.includes("soba")) {
-    emit("send-message", "soba");
-  }
-
-  if (item.title === "Saune") {
-    emit("send-message", "sauna");
-  }
-};
-
 const scrollToBottom = () => {
   nextTick(() => {
     if (chatLogRef.value) {
@@ -72,7 +63,7 @@ watch(
     <div
       v-for="(msgGrp, index) in msgGroups"
       :key="msgGrp.senderId + String(index)"
-      class="chat-group d-flex align-start mb-8"
+      class="chat-group d-flex align-start mb-4"
       :class="{ 'flex-row-reverse': msgGrp.senderId !== chatAssistantId }"
     >
       <div
@@ -85,10 +76,11 @@ watch(
         </VAvatar>
       </div>
       <div
-        class="chat-body d-inline-flex flex-column w-100"
+        class="chat-body d-inline-flex flex-column"
         :class="
           msgGrp.senderId !== chatAssistantId ? 'align-end' : 'align-start'
         "
+        style="max-width: 90%"
       >
         <div
           v-if="msgGrp.senderId === chatAssistantId"
@@ -100,6 +92,10 @@ watch(
           v-for="(msgData, msgIndex) in msgGrp.messages"
           :key="msgIndex"
           class="chat-content-wrapper"
+          :class="
+            msgGrp.messages.find((msg) => msg.type === 'carousel') &&
+            'bg-transparent w-90'
+          "
         >
           <div
             class="chat-content text-body-1 py-2 px-4 elevation-2 mb-2"
@@ -107,25 +103,26 @@ watch(
               msgData.senderId === chatAssistantId
                 ? 'bg-surface chat-left'
                 : 'bg-primary text-white chat-right',
-              msgData.type === 'slider'
+              msgData.type === 'carousel'
                 ? 'bg-transparent w-100 p-0-important'
                 : '',
             ]"
           >
-            <p v-if="msgData.type === 'basic'" class="mb-0 pre-line">
-              {{ msgData.text }}
-            </p>
+            <p
+              v-if="msgData.type === 'basic'"
+              v-html="msgData.text"
+              class="mb-0 pre-line"
+            ></p>
 
-            <p v-if="msgData.type === 'multi-choice'" class="mb-0 pre-line">
-              {{ msgData.text }}
-            </p>
+            <p
+              v-if="msgData.type === 'multi-choice'"
+              v-html="msgData.text"
+              class="mb-0 pre-line"
+            ></p>
 
-            <div v-if="msgData.type === 'slider'">
+            <div v-if="msgData.type === 'carousel'">
               <Carousel :items-to-show="1.5" snap-align="start" class="w-100">
-                <Slide
-                  v-for="(item, index) in msgData.sliderArticles"
-                  :key="index"
-                >
+                <Slide v-for="(item, index) in msgData.articles" :key="index">
                   <VCard
                     class="w-100 position-relative cursor-pointer border slider-card"
                     elevation="0"
@@ -141,25 +138,28 @@ watch(
                         variant="elevated"
                         style="z-index: 99"
                         size="x-small"
-                        >{{ item.tag }}
+                        v-for="(tag, index) in item.tags.slice(0, 2)"
+                        >{{ tag }}
                       </VChip>
                     </div>
 
-                    <a
-                      :href="`https://suncehotel.rs/${item.link}`"
-                      target="_blank"
-                      @click="handleCardClick(item)"
-                    >
-                      <VImg :src="item.image" cover style="height: 100%" />
+                    <a :href="item.redirectUrl" target="_blank">
+                      <VImg
+                        :src="item.image || DeluksSoba"
+                        cover
+                        style="height: 100%"
+                      />
                     </a>
                     <VCardItem class="pt-2 pb-0 px-2">
                       <VCardTitle class="text-start">{{
-                        item.title
+                        item.name
                       }}</VCardTitle>
                     </VCardItem>
 
-                    <VCardText class="pb-2 pt-0 px-2 text-start">
-                      {{ item.subtitle }}
+                    <VCardText
+                      class="mb-2 py-0 px-2 text-start line-clamp-2"
+                      v-html="item.description"
+                    >
                     </VCardText>
                   </VCard>
                 </Slide>
@@ -172,7 +172,7 @@ watch(
           </div>
           <div
             v-if="msgData.type === 'multi-choice'"
-            class="d-flex gap-2 flex-wrap mt-2"
+            class="d-flex gap-2 flex-wrap mt-2 mb-1"
           >
             <VChip
               v-for="(choice, index) in msgData.choices"
@@ -190,7 +190,10 @@ watch(
           :class="{ 'text-right': msgGrp.senderId !== chatAssistantId }"
           class="d-flex align-center justify-end w-100 gap-2"
         >
-          <p class="text-x-sm text-disabled mb-0" style="letter-spacing: 0.4px">
+          <p
+            class="text-x-sm text-disabled mb-0 chat-timestamp"
+            style="letter-spacing: 0.4px"
+          >
             {{
               new Date(
                 msgGrp.messages[msgGrp.messages.length - 1].createdAt
@@ -223,6 +226,9 @@ watch(
 </template>
 
 <style lang="scss">
+.w-90 {
+  width: 90% !important;
+}
 .chat-log {
   .chat-content {
     border-end-end-radius: 6px;
@@ -404,5 +410,71 @@ $speed: 1.5s;
 
 .carousel__prev {
   left: -25px;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  .position-fixed {
+    right: 5px !important;
+    max-width: 470px !important;
+
+    .chat-app-layout {
+      width: 100% !important;
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .chat-log {
+    padding: 8px !important;
+
+    .chat-avatar {
+      margin-right: 8px !important;
+    }
+
+    .v-chip {
+      height: fit-content !important;
+      border-radius: 10px !important;
+    }
+
+    .v-chip__content {
+      font-size: 11px !important;
+      text-wrap: wrap;
+    }
+
+    .chat-timestamp {
+      font-size: 11px !important;
+    }
+
+    .chat-body {
+      h4 {
+        font-size: 14px !important;
+      }
+    }
+
+    .chat-content {
+      p {
+        font-size: 13px !important;
+        line-height: 18px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .position-fixed {
+    max-width: 95% !important;
+  }
+
+  .chat-log-message-form {
+    margin-right: 10px !important;
+    margin-left: 10px !important;
+  }
 }
 </style>

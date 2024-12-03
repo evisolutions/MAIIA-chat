@@ -27,6 +27,7 @@ const scrollToBottomInChatLog = () => {
 };
 
 const showChat = ref(false);
+const isLoading = ref(false);
 
 // Chat message
 const msg = ref("");
@@ -34,7 +35,11 @@ const msg = ref("");
 const sendMessage = async () => {
   if (!msg.value) return;
 
+  isLoading.value = true;
+
   await store.sendMsg(msg.value);
+
+  isLoading.value = false;
 
   // Reset message input
   msg.value = "";
@@ -58,35 +63,7 @@ const chatContentContainerBg = computed(() => {
 });
 
 const handleSendMessageFromChoice = async (message) => {
-  let newMsg;
-
-  switch (message) {
-    case "Sobe":
-      newMsg = "Interesuje me da saznam nešto više o sobama";
-      break;
-
-    case "Sadržaji hotela":
-      newMsg = "Interesuje me da saznam nešto više o sadržajima hotela";
-      break;
-
-    case "Restoran":
-      newMsg = "Interesuje me da saznam nešto više o restoranu";
-      break;
-
-    case "Spa centar":
-      newMsg = "Spa centar";
-      break;
-
-    case "soba":
-      newMsg = "soba";
-      break;
-
-    case "sauna":
-      newMsg = "sauna";
-      break;
-  }
-
-  await store.sendMsg(newMsg);
+  await store.sendMsg(message);
 
   nextTick(() => {
     scrollToBottomInChatLog();
@@ -169,6 +146,7 @@ watch(
               class="chat-message-input"
               placeholder="Message..."
               autofocus
+              :disabled="isLoading"
             >
               <template #append-inner>
                 <VIcon

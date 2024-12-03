@@ -10,7 +10,7 @@ export const themes = {
       secondary: "#7C7F84", // Slightly darkened
       "secondary-darken-1": "#6F7277",
       "on-secondary": "#fff",
-      success: "#4DB600",
+      success: "#10B981",
       "success-darken-1": "#46A500",
       "on-success": "#fff",
       info: "#149FE6", // Slight adjustment
@@ -19,7 +19,7 @@ export const themes = {
       warning: "#E6A200",
       "warning-darken-1": "#CC8F00",
       "on-warning": "#fff",
-      error: "#E64449",
+      error: "#EF4444",
       "error-darken-1": "#CC3B40",
       "on-error": "#fff",
       background: "#f4f5fa",
@@ -42,6 +42,15 @@ export const themes = {
       "expansion-panel-text-custom-bg": "#fafafa",
       "track-bg": "#F0F2F8",
       "chat-bg": "#F7F6FA",
+      "button-bg-primary": "#EA4475",
+      "button-bg-disabled": "#B3B9CF",
+      "text-color-primary": "#fff",
+      "text-color-secondary": "#374151",
+      "text-color-gray": "#1B202D",
+      "input-border-radius": "10px",
+      "button-border-radius": "100px",
+      "chat-message-bg-primary": staticPrimaryColor,
+      "chat-message-bg-secondary": "#F2F4FB",
     },
     variables: {
       "code-color": "#AF00FF", // Adjusted slightly to be in harmony with primary
@@ -111,6 +120,15 @@ export const themes = {
       "expansion-panel-text-custom-bg": "#fafafa",
       "track-bg": "#F0F2F8",
       "chat-bg": "#F7F6FA",
+      "button-bg-primary": "#EA4475",
+      "button-bg-disabled": "#B3B9CF",
+      "text-color-primary": "#fff",
+      "text-color-secondary": "#374151",
+      "text-color-gray": "#1B202D",
+      "input-border-radius": "10px",
+      "button-border-radius": "100px",
+      "chat-message-bg-primary": staticPrimaryColor,
+      "chat-message-bg-secondary": "#F2F4FB",
     },
     variables: {
       "code-color": "#AF00FF", // Adjusted slightly to be in harmony with primary
