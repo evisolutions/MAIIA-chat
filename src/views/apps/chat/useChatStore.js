@@ -1,4 +1,4 @@
-import { fetchSingleArticle, sendMessage } from "@/services/chat";
+import { fetchSingleArticle, sendMessage, storeEvent } from "@/services/chat";
 
 export const useChatStore = defineStore("chat", {
   // ℹ️ arrow function recommended for full type inference
@@ -59,6 +59,7 @@ export const useChatStore = defineStore("chat", {
 
           if (response.data.operations.length === 0) {
             this.activeChat.messages.push({
+              messageId: response.data.messageId,
               text: parseMarkdownToHTML(cleanMessage),
               type: "basic",
               senderId: 1,
@@ -86,6 +87,7 @@ export const useChatStore = defineStore("chat", {
               }
 
               this.activeChat.messages.push({
+                messageId: response.data.messageId,
                 text: parseMarkdownToHTML(cleanMessage),
                 type: "basic",
                 senderId: 1,
@@ -105,6 +107,7 @@ export const useChatStore = defineStore("chat", {
               }
 
               this.activeChat.messages.push({
+                messageId: response.data.messageId,
                 articles: carouselArticles,
                 type: "carousel",
                 senderId: 1,
@@ -133,6 +136,7 @@ export const useChatStore = defineStore("chat", {
 
               // Then, display the options
               this.activeChat.messages.push({
+                messageId: response.data.messageId,
                 type: "multi-choice",
                 text: parseMarkdownToHTML(cleanMessage),
                 choices:
@@ -154,6 +158,22 @@ export const useChatStore = defineStore("chat", {
     },
     async setCounter(counter) {
       this.counter = counter;
+    },
+    async handleStoreEvent({ messageId, articleId, type, name, usage }) {
+      try {
+        const response = await storeEvent({
+          messageId,
+          articleId,
+          type,
+          name,
+          usage,
+          sessionId: this.sessionId,
+        });
+
+        return response;
+      } catch (error) {
+        return error.response;
+      }
     },
   },
 });

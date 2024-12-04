@@ -125,12 +125,7 @@ watch(
           <VDivider />
 
           <!-- Chat log -->
-          <PerfectScrollbar
-            ref="chatLogPS"
-            tag="ul"
-            :options="{ wheelPropagation: false }"
-            class="flex-grow-1"
-          >
+          <PerfectScrollbar ref="chatLogPS" tag="ul" class="flex-grow-1">
             <ChatLog @send-message="handleSendMessageFromChoice" />
           </PerfectScrollbar>
 

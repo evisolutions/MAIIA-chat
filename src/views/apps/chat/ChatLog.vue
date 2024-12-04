@@ -52,6 +52,16 @@ watch(
   },
   { deep: true }
 );
+
+const handleArticleClick = (articleId, messageId) => {
+  store.handleStoreEvent({
+    messageId,
+    articleId,
+    type: "click",
+    name: "carousel",
+    usage: "analytics",
+  });
+};
 </script>
 
 <template>
@@ -143,13 +153,20 @@ watch(
                       </VChip>
                     </div>
 
-                    <a :href="item.redirectUrl" target="_blank">
+                    <!-- <a
+                      :href="item.redirectUrl"
+                      @click="handleArticleClick(item, msgData.messageId)"
+                      target="_blank"
+                    > -->
+                    <span
+                      @click="handleArticleClick(item.id, msgData.messageId)"
+                    >
                       <VImg
-                        :src="item.image || DeluksSoba"
+                        :src="item.coverImageUrl || DeluksSoba"
                         cover
                         style="height: 100%"
                       />
-                    </a>
+                    </span>
                     <VCardItem class="pt-2 pb-0 px-2">
                       <VCardTitle class="text-start">{{
                         item.name

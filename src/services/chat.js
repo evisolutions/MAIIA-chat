@@ -47,3 +47,13 @@ export const fetchSingleArticle = async (articleId) => {
     console.error(error);
   }
 };
+
+export const storeEvent = async (data) => {
+  try {
+    const response = await apiClient.post("/event/store", { ...data });
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
