@@ -1,15 +1,7 @@
 <template>
-  <div class="background"></div>
-  <Chat />
+  <Chat :property-id="propertyId" />
 </template>
 
-<script setup></script>
-
-<style lang="scss">
-.background {
-  background-image: url("@/assets/images/background-img.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  height: 2500px;
-}
-</style>
+<script setup>
+const propertyId = parseInt(new URLSearchParams(window.location.search).get('propertyId'), 10)
+</script>
