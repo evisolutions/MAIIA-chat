@@ -1,39 +1,41 @@
-import vue from "@vitejs/plugin-vue";
-import vueJsx from "@vitejs/plugin-vue-jsx";
-import { fileURLToPath } from "node:url";
-import AutoImport from "unplugin-auto-import/vite";
-import Components from "unplugin-vue-components/vite";
+import vue from "@vitejs/plugin-vue"
+import vueJsx from "@vitejs/plugin-vue-jsx"
+import { fileURLToPath } from "node:url"
+import AutoImport from "unplugin-auto-import/vite"
+import Components from "unplugin-vue-components/vite"
 import {
   VueRouterAutoImports,
   getPascalCaseRouteName,
-} from "unplugin-vue-router";
-import VueRouter from "unplugin-vue-router/vite";
-import { defineConfig } from "vite";
-import Layouts from "vite-plugin-vue-layouts";
-import vuetify from "vite-plugin-vuetify";
-import svgLoader from "vite-svg-loader";
+} from "unplugin-vue-router"
+import VueRouter from "unplugin-vue-router/vite"
+import { defineConfig } from "vite"
+import Layouts from "vite-plugin-vue-layouts"
+import vuetify from "vite-plugin-vuetify"
+import svgLoader from "vite-svg-loader"
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/mojoapp/',
   plugins: [
     // Docs: https://github.com/posva/unplugin-vue-router
     // ℹ️ This plugin should be placed before vue plugin
     VueRouter({
-      getRouteName: (routeNode) => {
+      getRouteName: routeNode => {
         // Convert pascal case to kebab case
         return getPascalCaseRouteName(routeNode)
           .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
-          .toLowerCase();
+          .toLowerCase()
       },
     }),
     vue({
       template: {
         compilerOptions: {
-          isCustomElement: (tag) =>
+          isCustomElement: tag =>
             tag === "swiper-container" || tag === "swiper-slide",
         },
       },
     }),
+
     // VueDevTools(),
     vueJsx(),
 
@@ -54,14 +56,14 @@ export default defineConfig({
       dirs: ["src/@core/components", "src/views/demos", "src/components"],
       dts: true,
       resolvers: [
-        (componentName) => {
+        componentName => {
           // Auto import `VueApexCharts`
           if (componentName === "VueApexCharts")
             return {
               name: "default",
               from: "vue3-apexcharts",
               as: "VueApexCharts",
-            };
+            }
         },
       ],
     }),
@@ -99,32 +101,56 @@ export default defineConfig({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@themeConfig": fileURLToPath(
-        new URL("./themeConfig.js", import.meta.url)
+        new URL("./themeConfig.js", import.meta.url),
       ),
       "@core": fileURLToPath(new URL("./src/@core", import.meta.url)),
       "@layouts": fileURLToPath(new URL("./src/@layouts", import.meta.url)),
       "@images": fileURLToPath(
-        new URL("./src/assets/images/", import.meta.url)
+        new URL("./src/assets/images/", import.meta.url),
       ),
       "@styles": fileURLToPath(
-        new URL("./src/assets/styles/", import.meta.url)
+        new URL("./src/assets/styles/", import.meta.url),
       ),
       "@configured-variables": fileURLToPath(
-        new URL("./src/assets/styles/variables/_template.scss", import.meta.url)
+        new URL("./src/assets/styles/variables/_template.scss", import.meta.url),
       ),
       "@db": fileURLToPath(
-        new URL("./src/plugins/fake-api/handlers/", import.meta.url)
+        new URL("./src/plugins/fake-api/handlers/", import.meta.url),
       ),
       "@api-utils": fileURLToPath(
-        new URL("./src/plugins/fake-api/utils/", import.meta.url)
+        new URL("./src/plugins/fake-api/utils/", import.meta.url),
       ),
     },
   },
   build: {
+    lib: {
+      entry: 'src/embed/main.js',
+      name: 'MojoChat',
+      fileName: format => `embed.${format}.js`,
+      formats: ['iife'],
+    },
+    cssCodeSplit: true,
     chunkSizeWarningLimit: 5000,
+    rollupOptions: {
+      external: ['vue', 'vuetify'],
+      output: {
+        globals: {
+          vue: 'Vue',
+          vuetify: 'Vuetify',
+        },
+        assetFileNames: assetInfo => {
+          if (assetInfo.name === 'style.css') return 'embed.css'
+          
+          return assetInfo.name
+        },
+      },
+    },
   },
   optimizeDeps: {
     exclude: ["vuetify"],
     entries: ["./src/**/*.vue"],
   },
-});
+  css: {
+    extract: true,
+  },
+})

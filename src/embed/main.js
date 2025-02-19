@@ -10,20 +10,15 @@ window.MojoChat = {
   init: function(config) {
     console.log('MojoChat init called with config:', config) // Debug log
     
-    // Create container for the chat
+    // Create container for the chat widget
     const chatContainer = document.createElement('div')
 
-    chatContainer.id = 'mojo-chat-container'
+    chatContainer.id = 'mojo-chat-widget'
     document.body.appendChild(chatContainer)
 
     // Create Vue app
-    const app = createApp({
-      data() {
-        return {
-          propertyId: config.propertyId,
-        }
-      },
-      template: '<Chat :property-id="propertyId" />',
+    const app = createApp(Chat, {
+      propertyId: config.propertyId,
     })
 
     // Use plugins
@@ -32,13 +27,10 @@ window.MojoChat = {
     app.use(pinia)
     app.use(vuetify)
     
-    // Register Chat component
-    app.component('Chat', Chat)
-
-    console.log('Mounting app to:', chatContainer) // Debug log
+    console.log('Mounting chat widget to:', chatContainer) // Debug log
 
     // Mount app
-    app.mount('#mojo-chat-container')
+    app.mount('#mojo-chat-widget')
   },
 }
 
