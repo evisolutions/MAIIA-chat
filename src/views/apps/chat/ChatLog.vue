@@ -1,5 +1,4 @@
 <script setup>
-import Avatar from "@/assets/images/avatars/avatar-1.png";
 import DeluksSoba from "@/assets/images/property/deluks-soba.png";
 import { useChatStore } from "@/views/apps/chat/useChatStore";
 import { computed, nextTick, ref, watch } from "vue";
@@ -34,7 +33,23 @@ const msgGroups = computed(() => {
 const handleSendMessageFromChoice = (message) => {
   selectedChoice.value = message;
 
-  emit("send-message", message);
+  let msg = "";
+
+  switch (message) {
+    case "Sadržaji hotela":
+      msg = "Reci mi nešto više o sadržajima hotela";
+      break;
+    case "Sobe":
+      msg = "Reci mi nešto više o sobama";
+      break;
+    case "Restoran":
+      msg = "Reci mi nešto više o restoranu";
+      break;
+    default:
+      msg = message;
+  }
+
+  emit("send-message", msg);
 };
 
 const scrollToBottom = () => {
@@ -53,14 +68,16 @@ watch(
   { deep: true }
 );
 
-const handleArticleClick = (articleId, messageId) => {
+const handleArticleClick = (article, messageId) => {
   store.handleStoreEvent({
     messageId,
-    articleId,
+    articleId: article.id,
     type: "click",
     name: "carousel",
     usage: "analytics",
   });
+
+  window.open(article.redirectUrl, "_blank");
 };
 </script>
 
@@ -82,7 +99,7 @@ const handleArticleClick = (articleId, messageId) => {
         :class="msgGrp.senderId !== chatAssistantId ? 'ms-4' : 'me-4'"
       >
         <VAvatar size="32">
-          <VImg :src="Avatar" />
+          <VImg :src="store.property.botIconUrl" />
         </VAvatar>
       </div>
       <div
@@ -96,7 +113,7 @@ const handleArticleClick = (articleId, messageId) => {
           v-if="msgGrp.senderId === chatAssistantId"
           :class="msgGrp.senderId !== chatAssistantId ? 'ms-4' : 'me-4'"
         >
-          <h4 class="mb-1">MAIIA Sunčica</h4>
+          <h4 class="mb-1">{{ store.property.botName }}</h4>
         </div>
         <div
           v-for="(msgData, msgIndex) in msgGrp.messages"
@@ -158,13 +175,11 @@ const handleArticleClick = (articleId, messageId) => {
                       @click="handleArticleClick(item, msgData.messageId)"
                       target="_blank"
                     > -->
-                    <span
-                      @click="handleArticleClick(item.id, msgData.messageId)"
-                    >
+                    <span @click="handleArticleClick(item, msgData.messageId)">
                       <VImg
                         :src="item.coverImageUrl || DeluksSoba"
                         cover
-                        style="height: 100%"
+                        style="height: 100%; max-height: 115px !important"
                       />
                     </span>
                     <VCardItem class="pt-2 pb-0 px-2">
@@ -196,14 +211,17 @@ const handleArticleClick = (articleId, messageId) => {
               :key="index"
               @click="handleSendMessageFromChoice(choice)"
               :variant="choice === selectedChoice ? 'elevated' : 'outlined'"
-              class="cursor-pointer"
+              class="cursor-pointer text-wrap"
               :color="choice === selectedChoice ? 'primary' : 'secondary'"
+              :disabled="store.loading"
               size="x-small"
+              style="height: fit-content !important"
               >{{ choice }}</VChip
             >
           </div>
         </div>
         <div
+          v-if="!msgGrp.messages.find((msg) => msg.initialOptions)"
           :class="{ 'text-right': msgGrp.senderId !== chatAssistantId }"
           class="d-flex align-center justify-end w-100 gap-2"
         >
@@ -224,7 +242,7 @@ const handleArticleClick = (articleId, messageId) => {
     <div v-if="store.loading" class="chat-group d-flex align-start mb-8">
       <div class="chat-avatar me-4">
         <VAvatar size="32">
-          <VImg :src="Avatar" />
+          <VImg :src="store.property.botIconUrl" />
         </VAvatar>
       </div>
       <div class="chat-body d-inline-flex flex-column w-100 align-start">

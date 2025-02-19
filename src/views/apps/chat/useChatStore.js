@@ -1,4 +1,9 @@
-import { fetchSingleArticle, sendMessage, storeEvent } from "@/services/chat";
+import {
+  fetchSingleArticle,
+  getProperty,
+  sendMessage,
+  storeEvent,
+} from "@/services/chat";
 
 export const useChatStore = defineStore("chat", {
   // ℹ️ arrow function recommended for full type inference
@@ -7,9 +12,8 @@ export const useChatStore = defineStore("chat", {
     chatsContacts: [],
     profileUser: undefined,
     loading: false,
-    activeChat: {
-      messages: [],
-    },
+    property: {},
+    activeChat: {},
     sessionId: null,
     conversationId: null,
   }),
@@ -44,7 +48,7 @@ export const useChatStore = defineStore("chat", {
         }
 
         if (response.status === 200) {
-          let cleanMessage = response.data.message;
+          let cleanMessage = response.data.data.message;
 
           // Remove "Data: " prefix
           if (cleanMessage.startsWith("Data: ")) {
@@ -57,9 +61,9 @@ export const useChatStore = defineStore("chat", {
             cleanMessage = cleanMessage.substring(0, metadataIndex).trim(); // Trim to remove any trailing whitespace
           }
 
-          if (response.data.operations.length === 0) {
+          if (response.data.data.operations.length === 0) {
             this.activeChat.messages.push({
-              messageId: response.data.messageId,
+              messageId: response.data.data.messageId,
               text: parseMarkdownToHTML(cleanMessage),
               type: "basic",
               senderId: 1,
@@ -67,12 +71,13 @@ export const useChatStore = defineStore("chat", {
             });
           }
 
-          if (response.data.operations.length > 0) {
+          if (response.data.data.operations.length > 0) {
             if (
-              response.data.operations[0].operation_type === "carousel_message"
+              response.data.data.operations[0].operationType ===
+              "carousel_message"
             ) {
               // First lets add the basic message
-              let cleanMessage = response.data.message;
+              let cleanMessage = response.data.data.message;
 
               // Remove "Data: " prefix
               if (cleanMessage.startsWith("Data: ")) {
@@ -87,7 +92,7 @@ export const useChatStore = defineStore("chat", {
               }
 
               this.activeChat.messages.push({
-                messageId: response.data.messageId,
+                messageId: response.data.data.messageId,
                 text: parseMarkdownToHTML(cleanMessage),
                 type: "basic",
                 senderId: 1,
@@ -97,17 +102,17 @@ export const useChatStore = defineStore("chat", {
               // Then fetch the articles, one by one
               let carouselArticles = [];
 
-              for (const articleId of response.data.operations[0].operation_data
-                .carousel_ids) {
+              for (const articleId of response.data.data.operations[0]
+                .operationData) {
                 const articleResponse = await fetchSingleArticle(articleId);
 
                 if (articleResponse.status === 200) {
-                  carouselArticles.push(articleResponse.data);
+                  carouselArticles.push(articleResponse.data.data);
                 }
               }
 
               this.activeChat.messages.push({
-                messageId: response.data.messageId,
+                messageId: response.data.data.messageId,
                 articles: carouselArticles,
                 type: "carousel",
                 senderId: 1,
@@ -116,10 +121,11 @@ export const useChatStore = defineStore("chat", {
             }
 
             if (
-              response.data.operations[0].operation_type === "select_message"
+              response.data.data.operations[0].operationType ===
+              "select_message"
             ) {
               // First lets add the basic message
-              let cleanMessage = response.data.message;
+              let cleanMessage = response.data.data.message;
 
               // Remove "Data: " prefix
               if (cleanMessage.startsWith("Data: ")) {
@@ -136,19 +142,18 @@ export const useChatStore = defineStore("chat", {
 
               // Then, display the options
               this.activeChat.messages.push({
-                messageId: response.data.messageId,
+                messageId: response.data.data.messageId,
                 type: "multi-choice",
                 text: parseMarkdownToHTML(cleanMessage),
-                choices:
-                  response.data.operations[0].operation_data.select_texts,
+                choices: response.data.data.operations[0].operationData,
                 senderId: 1,
                 createdAt: new Date(),
               });
             }
           }
 
-          this.conversationId = response.data.conversationId;
-          this.sessionId = response.data.sessionId;
+          this.conversationId = response.data.data.conversationId;
+          this.sessionId = response.data.data.sessionId;
         }
       } catch (error) {
         console.error(error);
@@ -174,6 +179,33 @@ export const useChatStore = defineStore("chat", {
       } catch (error) {
         return error.response;
       }
+    },
+    async fetchProperty(id) {
+      try {
+        const response = await getProperty(id);
+
+        if (response.status === 200) {
+          this.property = response.data.data;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async setInitialChat() {
+      this.activeChat = {
+        messages: [
+          {
+            text: `Zdravo ja sam ${this.property?.botName}, AI Concierge hotela ${this.property?.name}. Kako mogu danas da vam pomognem?`,
+            type: "basic",
+            senderId: 1,
+            createdAt: new Date(),
+            messageId: 1,
+            type: "multi-choice",
+            choices: ["Sobe", "Sadržaji hotela", "Restoran"],
+            initialOptions: true,
+          },
+        ],
+      };
     },
   },
 });

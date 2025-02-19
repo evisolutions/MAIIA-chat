@@ -1,4 +1,5 @@
 <script setup>
+import { useChatStore } from "@/views/apps/chat/useChatStore";
 import initCore from "@core/initCore";
 import { initConfigStore, useConfigStore } from "@core/stores/config";
 import { hexToRgb } from "@layouts/utils";
@@ -11,6 +12,16 @@ initCore();
 initConfigStore();
 
 const configStore = useConfigStore();
+
+const chatStore = useChatStore();
+
+onMounted(async () => {
+  const PROPERTY_ID = import.meta.env.VITE_APP_PROPERTY_ID;
+
+  await chatStore.fetchProperty(PROPERTY_ID);
+
+  chatStore.setInitialChat();
+});
 </script>
 
 <template>

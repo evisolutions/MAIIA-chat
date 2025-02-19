@@ -1,5 +1,4 @@
 <script setup>
-import SuncicaLogo from "@/assets/images/suncica-logo.png";
 import { themes } from "@/plugins/vuetify/theme";
 import ChatLog from "@/views/apps/chat/ChatLog.vue";
 import { useChatStore } from "@/views/apps/chat/useChatStore";
@@ -35,11 +34,7 @@ const msg = ref("");
 const sendMessage = async () => {
   if (!msg.value) return;
 
-  isLoading.value = true;
-
   await store.sendMsg(msg.value);
-
-  isLoading.value = false;
 
   // Reset message input
   msg.value = "";
@@ -118,7 +113,7 @@ watch(
             class="active-chat-header d-flex align-center text-medium-emphasis"
           >
             <div class="py-2" style="height: 60px">
-              <img :src="SuncicaLogo" style="height: 50px" />
+              <img :src="store.property.addOnIconUrl" style="height: 50px" />
             </div>
           </div>
 
@@ -141,7 +136,9 @@ watch(
               class="chat-message-input"
               placeholder="Message..."
               autofocus
-              :disabled="isLoading"
+              :disabled="store.loading"
+              :loading="store.loading"
+              autocomplete="off"
             >
               <template #append-inner>
                 <VIcon

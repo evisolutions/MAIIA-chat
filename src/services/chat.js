@@ -19,10 +19,13 @@ apiClient.interceptors.request.use((config) => {
 });
 
 export const sendMessage = async (message, sessionId, conversationId) => {
+  const PROPERTY_ID = import.meta.env.VITE_APP_PROPERTY_ID;
+
   const payload = {
     message,
     source: "website_add_on",
     conversationType: "info",
+    propertyId: Number(PROPERTY_ID),
     ...(sessionId && { sessionId }),
     ...(conversationId && { conversationId }), // remains a number
   };
@@ -51,6 +54,18 @@ export const fetchSingleArticle = async (articleId) => {
 export const storeEvent = async (data) => {
   try {
     const response = await apiClient.post("/event/store", { ...data });
+
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getProperty = async (id) => {
+  try {
+    const response = await apiClient.get(
+      `/property/fetch-single?propertyId=${id}`
+    );
 
     return response;
   } catch (error) {
