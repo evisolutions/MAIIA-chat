@@ -1,104 +1,173 @@
 <script setup>
-import { themes } from "@/plugins/vuetify/theme";
-import ChatLog from "@/views/apps/chat/ChatLog.vue";
-import { useChatStore } from "@/views/apps/chat/useChatStore";
-import { PerfectScrollbar } from "vue3-perfect-scrollbar";
-import { useDisplay, useTheme } from "vuetify";
+import { themes } from "@/plugins/vuetify/theme"
+import ChatLog from "@/views/apps/chat/ChatLog.vue"
+import { useChatStore } from "@/views/apps/chat/useChatStore"
+import { createApp } from 'vue'
+import { PerfectScrollbar } from "vue3-perfect-scrollbar"
+import { useDisplay, useTheme } from "vuetify"
 
-definePage({ meta: { layoutWrapperClasses: "layout-content-height-fixed" } });
+// Props for configuration
+const props = defineProps({
+  widgetWidth: {
+    type: String,
+    default: '505px',
+  },
+  widgetHeight: {
+    type: String,
+    default: '630px',
+  },
+})
+
+definePage({ meta: { layoutWrapperClasses: "layout-content-height-fixed" } })
 
 // composables
-const vuetifyDisplays = useDisplay();
-const store = useChatStore();
+const vuetifyDisplays = useDisplay()
+const store = useChatStore()
+
 const { isLeftSidebarOpen } = useResponsiveLeftSidebar(
-  vuetifyDisplays.smAndDown
-);
+  vuetifyDisplays.smAndDown,
+)
 
 // Perfect scrollbar
-const chatLogPS = ref();
+const chatLogPS = ref()
 
 const scrollToBottomInChatLog = () => {
-  if (!chatLogPS.value) return;
+  if (!chatLogPS.value) return
 
-  const scrollEl = chatLogPS.value.$el || chatLogPS.value;
+  const scrollEl = chatLogPS.value.$el || chatLogPS.value
 
-  scrollEl.scrollTop = scrollEl.scrollHeight;
-};
+  scrollEl.scrollTop = scrollEl.scrollHeight
+}
 
-const showChat = ref(false);
-const isLoading = ref(false);
+const showChat = ref(false)
+const isLoading = ref(false)
 
 // Chat message
-const msg = ref("");
+const msg = ref("")
 
+// Create Web Component
+class ChatWidget extends HTMLElement {
+  constructor() {
+    super()
+
+
+    // Create a shadow root
+    const shadow = this.attachShadow({ mode: 'open' })
+    
+    // Create a container for the Vue app
+    const container = document.createElement('div')
+
+    shadow.appendChild(container)
+    
+    // Mount Vue app to shadow DOM
+    const app = createApp({
+      setup() {
+        // Your existing setup logic
+        return {
+          showChat,
+          store,
+          msg,
+          sendMessage,
+
+          // ... other required refs and methods
+        }
+      },
+      template: '#chat-widget-template',
+    })
+    
+    app.mount(container)
+  }
+}
+
+// Register the web component
+customElements.define('chat-widget', ChatWidget)
+
+// Modify sendMessage to emit custom events instead of postMessage
 const sendMessage = async () => {
-  if (!msg.value) return;
+  if (!msg.value) return
 
-  await store.sendMsg(msg.value);
+  await store.sendMsg(msg.value)
 
-  // Reset message input
-  msg.value = "";
 
-  // Scroll to bottom
+  // Emit custom event that parent can listen to
+  const event = new CustomEvent('message-sent', { 
+    detail: { message: msg.value },
+    bubbles: true,
+    composed: true,
+  })
+
+  document.dispatchEvent(event)
+  
+  msg.value = ""
+  
   nextTick(() => {
-    scrollToBottomInChatLog();
-  });
-};
+    scrollToBottomInChatLog()
+  })
+}
+
+// Listen for external commands using custom events
+onMounted(() => {
+  store.getChat()
+  
+  document.addEventListener('toggle-chat', event => {
+    showChat.value = event.detail.show
+  })
+})
+
+onUnmounted(() => {
+  document.removeEventListener('toggle-chat')
+})
 
 // file input
-const refInputEl = ref();
+const refInputEl = ref()
 
-const { name } = useTheme();
+const { name } = useTheme()
 
 const chatContentContainerBg = computed(() => {
-  let color = "transparent";
-  if (themes) color = themes?.[name.value].colors?.["chat-bg"];
+  let color = "transparent"
+  if (themes) color = themes?.[name.value].colors?.["chat-bg"]
 
-  return color;
-});
+  return color
+})
 
-const handleSendMessageFromChoice = async (message) => {
-  await store.sendMsg(message);
+const handleSendMessageFromChoice = async message => {
+  await store.sendMsg(message)
 
   nextTick(() => {
-    scrollToBottomInChatLog();
-  });
-};
-
-onMounted(() => {
-  store.getChat();
-});
+    scrollToBottomInChatLog()
+  })
+}
 
 watch(
   () => store.activeChat,
   () => {
     nextTick(() => {
-      scrollToBottomInChatLog();
-    });
-  }
-);
+      scrollToBottomInChatLog()
+    })
+  },
+)
 
 watch(
   () => showChat.value,
-  (val) => {
+  val => {
     if (val) {
       nextTick(() => {
-        scrollToBottomInChatLog();
-      });
+        scrollToBottomInChatLog()
+      })
     }
-  }
-);
+  },
+)
 </script>
 
 <template>
   <div
-    class="d-flex flex-column align-end w-100 position-fixed"
-    style="bottom: 20px; right: 20px"
+    class="chat-widget-root d-flex flex-column align-end w-100"
+    :style="{ width: widgetWidth }"
   >
     <VLayout
       v-if="showChat"
       class="chat-app-layout bg-surface d-flex flex-column justify-end"
-      style="width: 505px; height: 630px"
+      :style="{ width: widgetWidth, height: widgetHeight }"
     >
       <!-- 👉 Chat content -->
       <VMain class="chat-content-container d-flex flex-column">
@@ -109,18 +178,26 @@ watch(
           style="flex-grow: 1"
         >
           <!-- 👉 Active chat header -->
-          <div
-            class="active-chat-header d-flex align-center text-medium-emphasis"
-          >
-            <div class="py-2" style="height: 60px">
-              <img :src="store.property.addOnIconUrl" style="height: 50px" />
+          <div class="active-chat-header d-flex align-center text-medium-emphasis">
+            <div
+              class="py-2"
+              style="height: 60px"
+            >
+              <img
+                :src="store.property.addOnIconUrl"
+                style="height: 50px"
+              >
             </div>
           </div>
 
           <VDivider />
 
           <!-- Chat log -->
-          <PerfectScrollbar ref="chatLogPS" tag="ul" class="flex-grow-1">
+          <PerfectScrollbar
+            ref="chatLogPS"
+            tag="ul"
+            class="flex-grow-1"
+          >
             <ChatLog @send-message="handleSendMessageFromChoice" />
           </PerfectScrollbar>
 
@@ -143,8 +220,8 @@ watch(
               <template #append-inner>
                 <VIcon
                   icon="ri-send-plane-2-line"
-                  @click="sendMessage"
                   class="me-4"
+                  @click="sendMessage"
                 />
               </template>
             </VTextField>
@@ -153,10 +230,14 @@ watch(
       </VMain>
     </VLayout>
     <VBtn
-      @click="() => (showChat = !showChat)"
       class="rounded-circle mt-2 justify-self-end"
-      style="height: 60px; width: 60px"
-      ><VIcon icon="ri-chat-1-line" size="30" />
+      style="width: 60px; height: 60px"
+      @click="() => (showChat = !showChat)"
+    >
+      <VIcon
+        icon="ri-chat-1-line"
+        size="30"
+      />
     </VBtn>
   </div>
 </template>
@@ -248,9 +329,9 @@ $chat-app-header-height: 76px;
     }
 
     .v-field--appended {
-      padding-inline-end: 6px;
       border-radius: 100px;
       background: #f2f4fb !important;
+      padding-inline-end: 6px;
 
       * {
         color: #1b202d;
@@ -270,5 +351,14 @@ $chat-app-header-height: 76px;
     height: 0.75rem;
     /* stylelint-enable liberty/use-logical-spec */
   }
+}
+
+// Add styles for web component
+:host {
+  position: fixed;
+  z-index: 9999;
+  right: 20px;
+  bottom: 20px;
+  display: block;
 }
 </style>
