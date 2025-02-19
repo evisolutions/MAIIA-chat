@@ -149,6 +149,11 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["vuetify"],
     entries: ["./src/**/*.vue"],
+    include: [
+      'vue3-perfect-scrollbar',
+
+      // Add other dependencies here
+    ],
   },
   css: {
     extract: true,
