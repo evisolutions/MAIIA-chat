@@ -465,6 +465,13 @@ $speed: 1.5s;
   }
 }
 
+@media screen and (max-width: 520px) {
+  .chat-app-layout {
+    max-width: 95vw;
+    margin: 0 auto;
+  }
+}
+
 @media screen and (max-width: 480px) {
   .chat-log {
     padding: 8px !important;
