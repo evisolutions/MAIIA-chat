@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Maiia Widget Test</title>
+
+    <!-- 1. Vue -->
+    <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.js"></script>
+
+    <!-- 2. Vue Demi (potreban za Pinia) -->
+    <script src="https://unpkg.com/vue-demi@0.14.7/lib/index.iife.js"></script>
+
+    <!-- 3. Pinia -->
+    <script src="https://unpkg.com/pinia@2.1.7/dist/pinia.iife.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+
+    <!-- 4. Naš widget -->
+    <script src="dist/maiia-widget.umd.js"></script>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Sačekamo da se sve učita
+            const checkDependencies = setInterval(() => {
+                if (window.Vue && window.VueDemi && window.Pinia && window.MaiiaWidget) {
+                    clearInterval(checkDependencies);
+                    console.log('Dependencies loaded:', {
+                        Vue: window.Vue.version,
+                        VueDemi: !!window.VueDemi,
+                        Pinia: !!window.Pinia,
+                        MaiiaWidget: !!window.MaiiaWidget
+                    });
+
+                    try {
+                        const widget = window.MaiiaWidget.init('app');
+                        console.log('Widget initialized successfully');
+                    } catch (error) {
+                        console.error('Widget initialization error:', error);
+                    }
+                } else {
+                    console.log('Waiting for dependencies...');
+                }
+            }, 100);
+
+            // Timeout nakon 5 sekundi
+            setTimeout(() => {
+                clearInterval(checkDependencies);
+                console.error('Timeout waiting for dependencies');
+            }, 5000);
+        });
+    </script>
+</body>
+
+</html>
