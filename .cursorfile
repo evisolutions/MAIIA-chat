@@ -1,0 +1,143 @@
+# .cursorfile - Make Vue App Exportable as UMD Widget
+
+# Task: Modify the Vue application to be exportable as a UMD widget.
+
+# 1. Project Setup (if not already done):
+#    - Verify that the project is a Vue CLI or Vite project.
+
+# 2. Configure Build Process:
+#    - Open `vue.config.js` (for Vue CLI) or `vite.config.js` (for Vite).
+#    - Add or modify the build configuration to produce a UMD bundle.
+
+# 3. Expose a Mount Function:
+#    - Create a file, e.g., `src/widget.js`, that will serve as the entry point for the UMD bundle.
+#    - In `widget.js`, define a function (e.g., `mountWidget`) that mounts the Vue component to a specified DOM element.
+#    - Export the `mountWidget` function.
+
+# 4. Update Main Entry Point:
+#    - Modify the main entry point (usually `src/main.js` or `src/main.ts`) to avoid immediate mounting.
+#    - The mounting logic should be moved to the `mountWidget` function.
+
+# 5. Configure Webpack/Rollup (if needed):
+#    - If using Webpack, ensure the `output.libraryTarget` is set to 'umd'.
+#    - If using Rollup, configure the output format to 'umd'.
+#    - Set the library name to something appropriate for your widget (e.g., 'MyWidget').
+
+# 6. Adjust Component Styling:
+#    - Encapsulate component styles to avoid conflicts with the host page.
+#    - Consider using CSS modules, scoped styles, or shadow DOM.
+
+# 7. Build the Widget:
+#    - Run the build command (e.g., `npm run build` or `yarn build`).
+#    - Verify that the build output includes a UMD bundle (e.g., `dist/my-widget.umd.js`).
+
+# 8. Test Embedding:
+#    - Create a simple HTML file to test embedding the widget.
+#    - Include the UMD bundle using a `<script>` tag.
+#    - Call the `mountWidget` function to render the widget.
+#    - Verify that the widget renders correctly.
+
+# Detailed Steps:
+
+# 2. Configure Build Process:
+#    - For Vue CLI (vue.config.js):
+    ```javascript
+    // vue.config.js
+    module.exports = {
+      configureWebpack: {
+        output: {
+          library: 'MyWidget', // Replace with your widget's name
+          libraryTarget: 'umd',
+          umdNamedDefine: true,
+        },
+      },
+      filenameHashing: false, // Disable hashing for easier embedding
+      css: {
+        extract: false, // Extract css to one file, or keep it inside of js.
+      },
+    };
+    ```
+#    - For Vite (vite.config.js):
+    ```javascript
+    // vite.config.js
+    import { defineConfig } from 'vite';
+    import vue from '@vitejs/plugin-vue';
+
+    export default defineConfig({
+      plugins: [vue()],
+      build: {
+        lib: {
+          entry: 'src/widget.js', // Entry point for the UMD bundle
+          name: 'MyWidget', // Replace with your widget's name
+          fileName: (format) => `my-widget.${format}.js`,
+          formats: ['umd'],
+        },
+        rollupOptions: {
+          external: ['vue'], // Prevent Vue from being included in the bundle
+          output: {
+            globals: {
+              vue: 'Vue', // Define how Vue is accessed in the UMD bundle
+            },
+          },
+        },
+        minify: 'terser', // or 'esbuild'
+        cssCodeSplit: false, // Prevent CSS from being split into separate files
+      },
+    });
+    ```
+
+# 3. Expose a Mount Function (src/widget.js):
+    ```javascript
+    // src/widget.js
+    import { createApp } from 'vue';
+    import App from './App.vue'; // Or your main component
+
+    export function mountWidget(selector, props = {}) {
+      const app = createApp(App, props);
+      app.mount(selector);
+    }
+    ```
+
+# 4. Update Main Entry Point (src/main.js or src/main.ts):
+    ```javascript
+    // src/main.js (or .ts)
+    import { createApp } from 'vue';
+    import App from './App.vue';
+
+    // Remove or comment out the immediate mounting logic:
+    // createApp(App).mount('#app');
+    ```
+
+# 6. Adjust Component Styling:
+#    - In your Vue components, use scoped styles or CSS modules:
+    ```vue
+    <template>
+      <div>
+        <p class="my-widget-text">Widget Content</p>
+      </div>
+    </template>
+
+    <style scoped>
+    .my-widget-text {
+      color: blue;
+    }
+    </style>
+    ```
+
+# 8. Test Embedding (test.html):
+    ```html
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Widget Test</title>
+    </head>
+    <body>
+      <div id="my-widget-container"></div>
+      <script src="dist/my-widget.umd.js"></script>
+      <script>
+        MyWidget.mountWidget('#my-widget-container');
+      </script>
+    </body>
+    </html>
+    ```
+# End of .cursorfile
