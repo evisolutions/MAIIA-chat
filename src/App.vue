@@ -1,38 +1,77 @@
+<template>
+  <VApp>
+    <VMain>
+      <VContainer>
+        <VCard>
+          <VCardTitle>
+            <div
+              v-if="chatStore.property?.addOnIconUrl"
+              class="py-2"
+            >
+              <img
+                :src="chatStore.property.addOnIconUrl"
+                style="block-size: 50px"
+              >
+            </div>
+          </VCardTitle>
+          <VCardText>
+            <div v-if="chatStore.activeChat">
+              <div
+                v-for="message in chatStore.activeChat.messages" 
+                :key="message.messageId"
+                class="mb-3"
+              >
+                <VAlert
+                  :color="message.senderId === 1 ? 'primary' : 'grey-lighten-1'"
+                  :variant="message.senderId === 1 ? 'tonal' : 'outlined'"
+                >
+                  {{ message.text }}
+                </VAlert>
+              </div>
+            </div>
+
+            <VForm
+              class="mt-4"
+              @submit.prevent="sendMessage"
+            >
+              <VTextField
+                v-model="msg"
+                placeholder="Type a message..."
+                :loading="chatStore.loading"
+                :disabled="chatStore.loading"
+                append-inner-icon="mdi-send"
+                @click:append-inner="sendMessage"
+              />
+            </VForm>
+          </VCardText>
+        </VCard>
+      </VContainer>
+    </VMain>
+  </VApp>
+</template>
+
 <script setup>
-import { useChatStore } from "@/views/apps/chat/useChatStore";
-import initCore from "@core/initCore";
-import { initConfigStore, useConfigStore } from "@core/stores/config";
-import { hexToRgb } from "@layouts/utils";
-import { useTheme } from "vuetify";
+import { useChatStore } from '@/views/apps/chat/useChatStore'
+import { onMounted, ref } from 'vue'
+import { useTheme } from 'vuetify'
 
-const { global } = useTheme();
+const { global } = useTheme()
+const chatStore = useChatStore()
+const msg = ref("")
 
-// ℹ️ Sync current theme with initial loader theme
-initCore();
-initConfigStore();
-
-const configStore = useConfigStore();
-
-const chatStore = useChatStore();
+const sendMessage = async () => {
+  if (!msg.value) return
+  await chatStore.sendMsg(msg.value)
+  msg.value = ""
+}
 
 onMounted(async () => {
-  const PROPERTY_ID = import.meta.env.VITE_APP_PROPERTY_ID;
-
-  await chatStore.fetchProperty(PROPERTY_ID);
-
-  chatStore.setInitialChat();
-});
+  const PROPERTY_ID = import.meta.env.VITE_APP_PROPERTY_ID
+  
+  if (PROPERTY_ID) {
+    await chatStore.fetchProperty(PROPERTY_ID)
+  }
+  
+  chatStore.setInitialChat()
+})
 </script>
-
-<template>
-  <VLocaleProvider :rtl="configStore.isAppRTL">
-    <!-- ℹ️ This is required to set the background color of active nav link based on currently active global theme's primary -->
-    <VApp
-      :style="`--v-global-theme-primary: ${hexToRgb(
-        global.current.value.colors.primary
-      )}`"
-    >
-      <RouterView />
-    </VApp>
-  </VLocaleProvider>
-</template>

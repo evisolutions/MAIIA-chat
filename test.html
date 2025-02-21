@@ -2,46 +2,49 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Maiia Widget Test</title>
+    <title>Widget Test</title>
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
-    <!-- 1. Vue -->
-    <script src="https://unpkg.com/vue@3.3.4/dist/vue.global.js"></script>
-
-    <!-- 2. Vue Demi (potreban za Pinia) -->
+    <!-- Vue Demi -->
     <script src="https://unpkg.com/vue-demi@0.14.7/lib/index.iife.js"></script>
 
-    <!-- 3. Pinia -->
-    <script src="https://unpkg.com/pinia@2.1.7/dist/pinia.iife.js"></script>
+    <!-- Pinia -->
+    <script src="https://unpkg.com/pinia@2.1.7/dist/pinia.iife.prod.js"></script>
+
+    <!-- Vuetify -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.js"></script>
+
+    <!-- Material Design Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet">
 </head>
 
 <body>
     <div id="app"></div>
-
-    <!-- 4. Naš widget -->
-    <script src="dist/maiia-widget.umd.js"></script>
+    <script src="https://maiia.perfection-studio.com/maiia-widget.umd.js"></script>
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-            // Sačekamo da se sve učita
             const checkDependencies = setInterval(() => {
-                if (window.Vue && window.VueDemi && window.Pinia && window.MaiiaWidget) {
+                if (window.Vue && window.VueDemi && window.Pinia && window.Vuetify && window.MaiiaWidget) {
                     clearInterval(checkDependencies);
                     console.log('Dependencies loaded:', {
                         Vue: window.Vue.version,
                         VueDemi: !!window.VueDemi,
                         Pinia: !!window.Pinia,
+                        Vuetify: !!window.Vuetify,
                         MaiiaWidget: !!window.MaiiaWidget
                     });
 
                     try {
-                        const widget = window.MaiiaWidget.init('app');
+                        const widget = window.MaiiaWidget.init('app', {
+                            theme: 'light'
+                        });
                         console.log('Widget initialized successfully');
                     } catch (error) {
                         console.error('Widget initialization error:', error);
                     }
-                } else {
-                    console.log('Waiting for dependencies...');
                 }
             }, 100);
 
