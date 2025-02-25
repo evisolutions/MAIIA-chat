@@ -128,8 +128,8 @@ const handleArticleClick = (article, messageId) => {
             class="chat-content text-body-1 py-2 px-4 elevation-2 mb-2"
             :class="[
               msgData.senderId === chatAssistantId
-                ? 'bg-surface chat-left'
-                : 'bg-primary text-white chat-right',
+                ? 'bg-surface-custom chat-left'
+                : 'text-white chat-right',
               msgData.type === 'carousel'
                 ? 'bg-transparent w-100 p-0-important'
                 : '',
@@ -212,7 +212,11 @@ const handleArticleClick = (article, messageId) => {
               @click="handleSendMessageFromChoice(choice)"
               :variant="choice === selectedChoice ? 'elevated' : 'outlined'"
               class="cursor-pointer text-wrap"
-              :color="choice === selectedChoice ? 'primary' : 'secondary'"
+              :class="
+                choice === selectedChoice
+                  ? 'chat-right'
+                  : 'text-secondary-custom'
+              "
               :disabled="store.loading"
               size="x-small"
               style="height: fit-content !important"
@@ -511,5 +515,9 @@ $speed: 1.5s;
     margin-right: 10px !important;
     margin-left: 10px !important;
   }
+}
+
+.chat-right {
+  background-color: rgb(93, 95, 239) !important;
 }
 </style>
