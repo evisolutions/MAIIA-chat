@@ -9,12 +9,18 @@ const MaiiaWidget = {
     try {
       const app = window.Vue.createApp(App)
       
-      // Dodajemo Pinia
+      // Kreiramo i dodamo Pinia
       const pinia = window.Pinia.createPinia()
 
       app.use(pinia)
       
-      // Dodajemo Vuetify
+      // Dodajemo globalne parametre
+      app.provide('widgetConfig', {
+        propertyId: options.propertyId,
+        conversationType: options.conversationType,
+      })
+      
+      // Kreiramo i dodamo Vuetify
       const vuetify = window.Vuetify.createVuetify({
         theme: {
           defaultTheme: options.theme || 'light',
@@ -24,7 +30,7 @@ const MaiiaWidget = {
       app.use(vuetify)
       
       app.mount(`#${containerId}`)
-      console.log('Widget mounted successfully')
+      console.log('Widget mounted successfully with config:', options)
 
       return {
         app,

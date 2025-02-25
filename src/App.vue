@@ -3,7 +3,7 @@
     <VMain>
       <div
         class="d-flex flex-column align-end w-100 position-fixed"
-        style="bottom: 20px; right: 20px"
+        style=" right: 20px;bottom: 20px"
       >
         <VLayout
           v-if="showChat"
@@ -19,21 +19,26 @@
               style="flex-grow: 1"
             >
               <!-- 👉 Active chat header -->
-              <div
-                class="active-chat-header d-flex align-center text-medium-emphasis"
-              >
-                <div class="py-2-custom" style="height: 60px">
+              <div class="active-chat-header d-flex align-center text-medium-emphasis">
+                <div
+                  class="py-2-custom"
+                  style="height: 60px"
+                >
                   <img
                     :src="store.property.addOnIconUrl"
                     style="height: 50px"
-                  />
+                  >
                 </div>
               </div>
 
               <VDivider />
 
               <!-- Chat log -->
-              <PerfectScrollbar ref="chatLogPS" tag="ul" class="flex-grow-1">
+              <PerfectScrollbar
+                ref="chatLogPS"
+                tag="ul"
+                class="flex-grow-1"
+              >
                 <ChatLog @send-message="handleSendMessageFromChoice" />
               </PerfectScrollbar>
 
@@ -58,8 +63,8 @@
                       :src="SendIcon"
                       width="24"
                       height="24"
-                      @click="sendMessage"
                       class="me-4"
+                      @click="sendMessage"
                     />
                   </template>
                 </VTextField>
@@ -69,9 +74,9 @@
         </VLayout>
         <VImg
           :src="store.property.botIconUrl"
-          @click="() => (showChat = !showChat)"
           class="rounded-circle mt-2 justify-self-end chat-btn"
-          style="height: 60px; width: 60px"
+          style=" width: 60px;height: 60px"
+          @click="() => (showChat = !showChat)"
         />
       </div>
     </VMain>
@@ -79,109 +84,116 @@
 </template>
 
 <script setup>
-import SendIcon from "@/assets/images/icons/send-icon.webp";
-import "@/assets/styles/styles.scss";
-import { useChatStore } from "@/views/apps/chat/useChatStore";
-import { computed, nextTick, onMounted, ref, watch } from "vue";
-import { useTheme } from "vuetify";
+import { useChatStore } from "@/views/apps/chat/useChatStore"
+import SendIcon from "@images/icons/send-icon.webp"
+import "@styles/styles.scss"
+import { computed, inject, nextTick, onMounted, ref, watch } from "vue"
+import { useDisplay, useTheme } from "vuetify"
 
-const { global } = useTheme();
-const chatStore = useChatStore();
+const { global } = useTheme()
+const chatStore = useChatStore()
+
+// Inject widget config
+const widgetConfig = inject('widgetConfig', { propertyId: null, conversationType: null })
+
+console.log('Widget config in App:', widgetConfig)
 
 onMounted(async () => {
-  const PROPERTY_ID = import.meta.env.VITE_APP_PROPERTY_ID;
+  // Use propertyId from widget config if available
+  const propertyId = widgetConfig.propertyId || import.meta.env.VITE_APP_PROPERTY_ID
 
-  if (PROPERTY_ID) {
-    await chatStore.fetchProperty(PROPERTY_ID);
+  if (propertyId) {
+    await chatStore.fetchProperty(propertyId)
   }
 
-  chatStore.setInitialChat();
-});
+  chatStore.setInitialChat()
+})
 
-import { themes } from "@/plugins/vuetify/theme";
-import ChatLog from "@/views/apps/chat/ChatLog.vue";
-import { PerfectScrollbar } from "vue3-perfect-scrollbar";
-import { useDisplay } from "vuetify";
+import { themes } from "@/plugins/vuetify/theme"
+import ChatLog from "@/views/apps/chat/ChatLog.vue"
+import { PerfectScrollbar } from "vue3-perfect-scrollbar"
+
 
 // composables
-const vuetifyDisplays = useDisplay();
-const store = useChatStore();
+const vuetifyDisplays = useDisplay()
+const store = useChatStore()
 
 // Perfect scrollbar
-const chatLogPS = ref();
+const chatLogPS = ref()
 
 const scrollToBottomInChatLog = () => {
-  if (!chatLogPS.value) return;
+  if (!chatLogPS.value) return
 
-  const scrollEl = chatLogPS.value.$el || chatLogPS.value;
+  const scrollEl = chatLogPS.value.$el || chatLogPS.value
 
-  scrollEl.scrollTop = scrollEl.scrollHeight;
-};
+  scrollEl.scrollTop = scrollEl.scrollHeight
+}
 
-const showChat = ref(false);
-const isLoading = ref(false);
+const showChat = ref(false)
+const isLoading = ref(false)
 
 // Chat message
-const msg = ref("");
+const msg = ref("")
 
 const sendMessage = async () => {
-  if (!msg.value) return;
+  if (!msg.value) return
 
-  await store.sendMsg(msg.value);
+  await store.sendMsg(msg.value)
 
   // Reset message input
-  msg.value = "";
+  msg.value = ""
 
   // Scroll to bottom
   nextTick(() => {
-    scrollToBottomInChatLog();
-  });
-};
+    scrollToBottomInChatLog()
+  })
+}
 
 // file input
-const refInputEl = ref();
+const refInputEl = ref()
 
-const { name } = useTheme();
+const { name } = useTheme()
 
 const chatContentContainerBg = computed(() => {
-  let color = "transparent";
-  if (themes) color = themes?.[name.value].colors?.["chat-bg"];
+  let color = "transparent"
+  if (themes) color = themes?.[name.value].colors?.["chat-bg"]
 
-  return color;
-});
+  return color
+})
 
-const handleSendMessageFromChoice = async (message) => {
-  await store.sendMsg(message);
+const handleSendMessageFromChoice = async message => {
+  await store.sendMsg(message)
 
   nextTick(() => {
-    scrollToBottomInChatLog();
-  });
-};
+    scrollToBottomInChatLog()
+  })
+}
 
 onMounted(() => {
-  store.getChat();
-});
+  store.getChat()
+})
 
 watch(
   () => store.activeChat,
   () => {
     nextTick(() => {
-      scrollToBottomInChatLog();
-    });
-  }
-);
+      scrollToBottomInChatLog()
+    })
+  },
+)
 
 watch(
   () => showChat.value,
-  (val) => {
+  val => {
     if (val) {
       nextTick(() => {
-        scrollToBottomInChatLog();
-      });
+        scrollToBottomInChatLog()
+      })
     }
-  }
-);
+  },
+)
 </script>
+
 <style lang="scss">
 @use "@styles/variables/vuetify.scss";
 @use "@core/scss/base/mixins.scss";
@@ -269,9 +281,9 @@ $chat-app-header-height: 76px;
     }
 
     .v-field--appended {
-      padding-inline-end: 6px;
       border-radius: 100px;
       background: #f2f4fb !important;
+      padding-inline-end: 6px;
 
       * {
         color: #1b202d;
@@ -313,7 +325,7 @@ $chat-app-header-height: 76px;
 
 .chat-app-layout {
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(46, 38, 61, 0.2), 0 0 transparent, 0 0 transparent;
+  box-shadow: 0 4px 10px rgba(46, 38, 61, 20%), 0 0 transparent, 0 0 transparent;
 }
 
 .bg-transparent {

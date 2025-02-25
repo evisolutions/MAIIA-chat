@@ -42,7 +42,9 @@
 
                     try {
                         const widget = window.MaiiaWidget.init('app', {
-                            theme: 'light'
+                            theme: 'light',
+                            propertyId: '15',
+                            conversationType: 'support'
                         });
                         console.log('Widget initialized successfully');
                     } catch (error) {
