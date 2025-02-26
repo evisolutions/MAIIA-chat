@@ -3,7 +3,7 @@
     <VMain>
       <div
         class="d-flex flex-column align-end w-100 position-fixed"
-        style=" right: 20px;bottom: 20px"
+        style="bottom: 20px; right: 20px"
       >
         <VLayout
           v-if="showChat"
@@ -75,7 +75,7 @@
         <VImg
           :src="store.property.botIconUrl"
           class="rounded-circle mt-2 justify-self-end chat-btn"
-          style=" width: 60px;height: 60px"
+          style="height: 60px; width: 60px"
           @click="() => (showChat = !showChat)"
         />
       </div>
@@ -87,23 +87,17 @@
 import { useChatStore } from "@/views/apps/chat/useChatStore"
 import SendIcon from "@images/icons/send-icon.webp"
 import "@styles/styles.scss"
-import { computed, inject, nextTick, onMounted, ref, watch } from "vue"
+import { computed, nextTick, onMounted, ref, watch } from "vue"
 import { useDisplay, useTheme } from "vuetify"
 
 const { global } = useTheme()
 const chatStore = useChatStore()
 
-// Inject widget config
-const widgetConfig = inject('widgetConfig', { propertyId: null, conversationType: null })
-
-console.log('Widget config in App:', widgetConfig)
-
 onMounted(async () => {
-  // Use propertyId from widget config if available
-  const propertyId = widgetConfig.propertyId || import.meta.env.VITE_APP_PROPERTY_ID
+  const PROPERTY_ID = import.meta.env.VITE_APP_PROPERTY_ID
 
-  if (propertyId) {
-    await chatStore.fetchProperty(propertyId)
+  if (PROPERTY_ID) {
+    await chatStore.fetchProperty(PROPERTY_ID)
   }
 
   chatStore.setInitialChat()
@@ -202,16 +196,6 @@ watch(
 // Variables
 $chat-app-header-height: 76px;
 
-// Placeholders
-%chat-header {
-  display: flex;
-  align-items: center;
-  min-block-size: $chat-app-header-height;
-  padding-inline: 1.25rem;
-}
-
-.chat-app-layout {
-  border-radius: vuetify.$card-border-radius;
 
   @include mixins.elevation(vuetify.$card-elevation);
 
@@ -281,9 +265,9 @@ $chat-app-header-height: 76px;
     }
 
     .v-field--appended {
+      padding-inline-end: 6px;
       border-radius: 100px;
       background: #f2f4fb !important;
-      padding-inline-end: 6px;
 
       * {
         color: #1b202d;
@@ -325,7 +309,7 @@ $chat-app-header-height: 76px;
 
 .chat-app-layout {
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(46, 38, 61, 20%), 0 0 transparent, 0 0 transparent;
+  box-shadow: 0 4px 10px rgba(46, 38, 61, 0.2), 0 0 transparent, 0 0 transparent;
 }
 
 .bg-transparent {

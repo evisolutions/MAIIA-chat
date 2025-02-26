@@ -39,4 +39,9 @@ export default defineConfig({
       },
     },
   },
+  css: {
+    modules: {
+      generateScopedName: 'mojo-[hash:base64:5]',
+    },
+  },
 })
