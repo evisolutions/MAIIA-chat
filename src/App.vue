@@ -3,7 +3,7 @@
     <VMain>
       <div
         class="d-flex flex-column align-end w-100 position-fixed"
-        style="bottom: 20px; right: 20px"
+        :style="{ right: '20px', bottom: '20px', zIndex: widgetZIndex }"
       >
         <VLayout
           v-if="showChat"
@@ -75,7 +75,7 @@
         <VImg
           :src="store.property.botIconUrl"
           class="rounded-circle mt-2 justify-self-end chat-btn"
-          style="height: 60px; width: 60px"
+          style=" width: 60px;height: 60px"
           @click="() => (showChat = !showChat)"
         />
       </div>
@@ -89,6 +89,10 @@ import SendIcon from "@images/icons/send-icon.webp"
 import "@styles/styles.scss"
 import { computed, nextTick, onMounted, ref, watch } from "vue"
 import { useDisplay, useTheme } from "vuetify"
+
+// Get options from widget initialization if available
+const options = window.MAIIAWidgetOptions || {}
+const widgetZIndex = ref(options.zIndex || 9999)
 
 const { global } = useTheme()
 const chatStore = useChatStore()
@@ -196,7 +200,12 @@ watch(
 // Variables
 $chat-app-header-height: 76px;
 
+%chat-header {
+  // Define your shared header styles here
+  // This was missing but referenced with @extend
+}
 
+.chat-app-layout {
   @include mixins.elevation(vuetify.$card-elevation);
 
   $sel-chat-app-layout: &;
@@ -265,9 +274,9 @@ $chat-app-header-height: 76px;
     }
 
     .v-field--appended {
-      padding-inline-end: 6px;
       border-radius: 100px;
       background: #f2f4fb !important;
+      padding-inline-end: 6px;
 
       * {
         color: #1b202d;
@@ -309,7 +318,7 @@ $chat-app-header-height: 76px;
 
 .chat-app-layout {
   border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(46, 38, 61, 0.2), 0 0 transparent, 0 0 transparent;
+  box-shadow: 0 4px 10px rgba(46, 38, 61, 20%), 0 0 transparent, 0 0 transparent;
 }
 
 .bg-transparent {

@@ -3,7 +3,7 @@
  * Plugin Name: Mojo AI Chatbot
  * Description: A simple plugin to embed Mojo AI Chatbot into Wordpress.
  * Version: 1.0
- * Author: Mojo AI Dev Team
+ * Author: Mojo AI and Evi Solutions Collab Team
  */
 
 if (!defined('ABSPATH')) {
@@ -31,6 +31,7 @@ function mojo_enqueue_chat_widget() {
     $domain = get_option('mojo_domain', 'maiia.perfection-studio.com');
     $property_id = get_option('mojo_property_id', '15');
     $conversation_type = get_option('mojo_conversation_type', 'support');
+    $z_index = get_option('mojo_z_index', '9999');
 
     // Mojo Widget Styles & Script
     wp_enqueue_style('mojo-widget', "https://{$domain}/style.css");
@@ -47,7 +48,8 @@ function mojo_enqueue_chat_widget() {
                         const widget = window.MaiiaWidget.init('app', {
                             theme: 'light',
                             propertyId: '<?php echo esc_js($property_id); ?>',
-                            conversationType: '<?php echo esc_js($conversation_type); ?>'
+                            conversationType: '<?php echo esc_js($conversation_type); ?>',
+                            zIndex: '<?php echo esc_js($z_index); ?>'
                         });
                         console.log('Widget initialized successfully');
                     } catch (error) {
@@ -72,9 +74,11 @@ function mojo_register_settings() {
     add_option('mojo_domain', 'maiia.perfection-studio.com');
     add_option('mojo_property_id', '15');
     add_option('mojo_conversation_type', 'support');
+    add_option('mojo_z_index', '9999');
     register_setting('mojo_options_group', 'mojo_domain');
     register_setting('mojo_options_group', 'mojo_property_id');
     register_setting('mojo_options_group', 'mojo_conversation_type');
+    register_setting('mojo_options_group', 'mojo_z_index');
 }
 add_action('admin_init', 'mojo_register_settings');
 
@@ -104,6 +108,11 @@ function mojo_options_page() {
                     <th scope="row"><label for="mojo_conversation_type">Conversation Type</label></th>
                     <td><input type="text" id="mojo_conversation_type" name="mojo_conversation_type"
                              value="<?php echo get_option('mojo_conversation_type'); ?>" /></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="mojo_z_index">Z-Index</label></th>
+                    <td><input type="text" id="mojo_z_index" name="mojo_z_index"
+                             value="<?php echo get_option('mojo_z_index'); ?>" /></td>
                 </tr>
             </table>
             <?php submit_button(); ?>

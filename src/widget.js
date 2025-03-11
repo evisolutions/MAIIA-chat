@@ -27,6 +27,7 @@ const MaiiaWidget = {
       app.provide('widgetConfig', {
         propertyId: options.propertyId,
         conversationType: options.conversationType,
+        zIndex: options.zIndex,
       })
       
       // Kreiramo i dodamo Vuetify
