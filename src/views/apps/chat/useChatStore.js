@@ -5,19 +5,29 @@ import {
   storeEvent,
 } from "@/services/chat"
 import { defineStore } from 'pinia'
+import { inject } from 'vue'
 
 export const useChatStore = defineStore("chat", {
   // ℹ️ arrow function recommended for full type inference
-  state: () => ({
-    contacts: [],
-    chatsContacts: [],
-    profileUser: undefined,
-    loading: false,
-    property: null,
-    activeChat: null,
-    sessionId: null,
-    conversationId: null,
-  }),
+  state: () => {
+    // Get widget configuration from injection
+    const widgetConfig = inject('widgetConfig', {})
+    
+    return {
+      contacts: [],
+      chatsContacts: [],
+      profileUser: undefined,
+      loading: false,
+      property: null,
+      activeChat: null,
+      sessionId: null,
+      conversationId: null,
+
+      // Store the widget configuration values
+      propertyId: widgetConfig.propertyId || null,
+      conversationType: widgetConfig.conversationType || 'info',
+    }
+  },
   actions: {
     async getChat() {
       return this.activeChat
@@ -38,6 +48,8 @@ export const useChatStore = defineStore("chat", {
           message,
           this.sessionId,
           this.conversationId,
+          this.conversationType, // Pass the conversation type
+          this.propertyId, // Pass the property ID
         )
 
         // Function to parse the Markdown-like syntax into HTML
@@ -182,6 +194,9 @@ export const useChatStore = defineStore("chat", {
       }
     },
     async fetchProperty(id) {
+      // Update the property ID in the store
+      this.propertyId = id
+      
       try {
         const response = await getProperty(id)
 
