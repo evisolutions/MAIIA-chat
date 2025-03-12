@@ -87,21 +87,25 @@
 import { useChatStore } from "@/views/apps/chat/useChatStore"
 import SendIcon from "@images/icons/send-icon.webp"
 import "@styles/styles.scss"
-import { computed, nextTick, onMounted, ref, watch } from "vue"
+import { computed, inject, nextTick, onMounted, ref, watch } from "vue"
 import { useDisplay, useTheme } from "vuetify"
+
+// Get widget configuration from injection
+const widgetConfig = inject('widgetConfig', {})
 
 // Get options from widget initialization if available
 const options = window.MAIIAWidgetOptions || {}
-const widgetZIndex = ref(options.zIndex || 9999)
+const widgetZIndex = ref(widgetConfig.zIndex || options.zIndex || 9999)
 
 const { global } = useTheme()
 const chatStore = useChatStore()
 
 onMounted(async () => {
-  const PROPERTY_ID = import.meta.env.VITE_APP_PROPERTY_ID
-
-  if (PROPERTY_ID) {
-    await chatStore.fetchProperty(PROPERTY_ID)
+  // Use propertyId from widget configuration instead of environment variable
+  const propertyId = widgetConfig.propertyId
+  
+  if (propertyId) {
+    await chatStore.fetchProperty(propertyId)
   }
 
   chatStore.setInitialChat()
