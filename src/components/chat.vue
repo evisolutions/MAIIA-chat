@@ -10,9 +10,6 @@ definePage({ meta: { layoutWrapperClasses: "layout-content-height-fixed" } });
 // composables
 const vuetifyDisplays = useDisplay();
 const store = useChatStore();
-const { isLeftSidebarOpen } = useResponsiveLeftSidebar(
-  vuetifyDisplays.smAndDown
-);
 
 // Perfect scrollbar
 const chatLogPS = ref();
