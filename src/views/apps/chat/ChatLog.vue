@@ -91,7 +91,7 @@ const handleArticleClick = (article, messageId) => {
 <template>
   <div
     ref="chatLogRef"
-    class="chat-log pa-5 pb-0 thin-scrollbar"
+    class="chat-log pa-5 pt-4 pb-0 thin-scrollbar"
     style="overflow-y: auto; flex: 1"
   >
     <div
@@ -106,7 +106,7 @@ const handleArticleClick = (article, messageId) => {
         :class="msgGrp.senderId !== chatAssistantId ? 'ms-4' : 'me-4'"
       >
         <VAvatar size="32">
-          <VImg :src="store.property.botIconUrl" />
+          <VImg :src="store.property?.botIconUrl" />
         </VAvatar>
       </div>
       <div
@@ -120,7 +120,9 @@ const handleArticleClick = (article, messageId) => {
           v-if="msgGrp.senderId === chatAssistantId"
           :class="msgGrp.senderId !== chatAssistantId ? 'ms-4' : 'me-4'"
         >
-          <h4 class="mb-1">{{ store.property.botName }}</h4>
+          <h4 class="mb-1" style="color: rgba(27, 32, 45, 1)">
+            {{ store.property.botName }}
+          </h4>
         </div>
         <div
           v-for="(msgData, msgIndex) in msgGrp.messages"
@@ -143,8 +145,8 @@ const handleArticleClick = (article, messageId) => {
             class="chat-content text-body-1 py-2 px-4 mb-2"
             :class="[
               msgData.senderId === chatAssistantId
-                ? 'bg-secondary'
-                : 'bg-primary',
+                ? 'chat-left bg-secondary'
+                : 'chat-right bg-primary',
               msgData.type === 'carousel'
                 ? 'bg-transparent w-100 p-0-important'
                 : '',
@@ -154,7 +156,7 @@ const handleArticleClick = (article, messageId) => {
               backgroundColor:
                 msgData.senderId === chatAssistantId
                   ? 'rgba(242, 244, 251, 1)'
-                  : 'rgba(93, 95, 239, 1)',
+                  : 'var(--v-theme-main)',
               color:
                 msgData.senderId === chatAssistantId
                   ? 'rgba(27, 32, 45, 1)'
@@ -194,7 +196,8 @@ const handleArticleClick = (article, messageId) => {
               :key="index"
               @click="handleSendMessageFromChoice(choice)"
               :variant="choice === selectedChoice ? 'elevated' : 'outlined'"
-              class="cursor-pointer text-wrap"
+              class="cursor-pointer text-wrap chip-choice"
+              :class="{ 'chip-choice-selected': choice === selectedChoice }"
               :disabled="store.loading"
               size="x-small"
               style="
@@ -204,9 +207,13 @@ const handleArticleClick = (article, messageId) => {
               "
               :style="{
                 backgroundColor:
-                  choice === selectedChoice ? 'rgba(75, 77, 237, 1)' : '',
+                  choice === selectedChoice ? 'var(--v-theme-main)' : '',
                 color:
                   choice === selectedChoice ? 'rgba(236, 241, 244, 1)' : '',
+                borderColor:
+                  choice === selectedChoice
+                    ? 'var(--v-theme-main)'
+                    : 'rgba(121, 116, 126, 1)',
               }"
               >{{ choice }}</VChip
             >
@@ -225,6 +232,7 @@ const handleArticleClick = (article, messageId) => {
               line-height: 10px;
               letter-spacing: 0%;
               text-align: right;
+              color: rgba(121, 124, 123, 1);
             "
           >
             {{
@@ -240,7 +248,7 @@ const handleArticleClick = (article, messageId) => {
     <div v-if="store.loading" class="chat-group d-flex align-start mb-8">
       <div class="chat-avatar me-4">
         <VAvatar size="32">
-          <VImg :src="store.property.botIconUrl" />
+          <VImg :src="store.property?.botIconUrl" />
         </VAvatar>
       </div>
       <div class="chat-body d-inline-flex flex-column w-100 align-start">
@@ -253,45 +261,9 @@ const handleArticleClick = (article, messageId) => {
           "
         >
           <div style="position: relative; height: 22px; width: 36px">
-            <span
-              style="
-                height: 8px;
-                width: 8px;
-                background: #ccc;
-                position: absolute;
-                left: 0;
-                top: 50%;
-                transform: translateY(-50%);
-                border-radius: 50%;
-                opacity: 0.2;
-              "
-            ></span>
-            <span
-              style="
-                height: 8px;
-                width: 8px;
-                background: #ccc;
-                position: absolute;
-                left: 12px;
-                top: 50%;
-                transform: translateY(-50%);
-                border-radius: 50%;
-                opacity: 0.2;
-              "
-            ></span>
-            <span
-              style="
-                height: 8px;
-                width: 8px;
-                background: #ccc;
-                position: absolute;
-                left: 24px;
-                top: 50%;
-                transform: translateY(-50%);
-                border-radius: 50%;
-                opacity: 0.2;
-              "
-            ></span>
+            <span class="chat-dot"></span>
+            <span class="chat-dot"></span>
+            <span class="chat-dot"></span>
           </div>
         </div>
       </div>

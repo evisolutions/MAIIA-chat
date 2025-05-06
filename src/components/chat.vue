@@ -131,7 +131,7 @@ watch(
               variant="solo"
               density="default"
               class="chat-message-input"
-              placeholder="Message..."
+              :placeholder="'Message' + '...'"
               autofocus
               :disabled="store.loading"
               :loading="store.loading"
@@ -247,7 +247,8 @@ $chat-app-header-height: 76px;
     .v-field--appended {
       padding-inline-end: 6px;
       border-radius: 100px;
-      background: #f2f4fb !important;
+      background: #f0f2fa !important;
+      box-shadow: none !important;
 
       * {
         color: #1b202d;

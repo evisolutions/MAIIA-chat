@@ -1,57 +1,62 @@
-import App from './App.vue'
+import App from "./App.vue";
 
 const MaiiaWidget = {
   init(containerId, options = {}) {
-    if (!window.Vue) throw new Error('Vue is not loaded')
-    if (!window.Vuetify) throw new Error('Vuetify is not loaded')
-    if (!window.Pinia) throw new Error('Pinia is not loaded')
+    if (!window.Vue) throw new Error("Vue is not loaded");
+    if (!window.Vuetify) throw new Error("Vuetify is not loaded");
+    if (!window.Pinia) throw new Error("Pinia is not loaded");
 
     try {
       // Kreiramo Shadow DOM container
-      const container = document.getElementById(containerId)
-      const shadow = container.attachShadow({ mode: 'open' })
-      
+      const container = document.getElementById(containerId);
+      const shadow = container.attachShadow({ mode: "open" });
+
       // Kreiramo mount point unutar Shadow DOM-a
-      const mountPoint = document.createElement('div')
+      const mountPoint = document.createElement("div");
 
-      shadow.appendChild(mountPoint)
+      shadow.appendChild(mountPoint);
 
-      const app = window.Vue.createApp(App)
-      
+      const app = window.Vue.createApp(App);
+
       // Kreiramo i dodamo Pinia
-      const pinia = window.Pinia.createPinia()
+      const pinia = window.Pinia.createPinia();
 
-      app.use(pinia)
-      
+      app.use(pinia);
+
       // Dodajemo globalne parametre
-      app.provide('widgetConfig', {
+      app.provide("widgetConfig", {
         propertyId: options.propertyId,
         conversationType: options.conversationType,
         zIndex: options.zIndex,
-      })
-      
+      });
+
       // Kreiramo i dodamo Vuetify
       const vuetify = window.Vuetify.createVuetify({
         theme: {
-          defaultTheme: options.theme || 'light',
+          defaultTheme: options.theme || "light",
         },
-      })
+      });
 
-      app.use(vuetify)
-      
+      app.use(vuetify);
+
       // Mountamo app u Shadow DOM
-      app.mount(mountPoint)
-      
+      app.mount(mountPoint);
+
       // Dodajemo potrebne stilove u Shadow DOM
-      const styles = document.createElement('style')
+      const styles = document.createElement("style");
 
       styles.textContent = `
         @import url('https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css');
         @import url('https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
         /* Custom stilovi za widget */
+        .v-application {
+          font-family: "Poppins", sans-serif !important;
+        }
+
         .chat-app-layout {
-          border-radius: 6px !important;
           box-shadow: 0 4px 10px rgba(46, 38, 61, 0.2) !important;
         }
 
@@ -62,7 +67,8 @@ const MaiiaWidget = {
         .chat-message-input .v-field--appended {
           padding-inline-end: 6px !important;
           border-radius: 100px !important;
-          background: #f2f4fb !important;
+          background: #f0f2fa !important;
+          box-shadow: none !important;
         }
 
         .chat-message-input .v-field--appended * {
@@ -91,9 +97,47 @@ const MaiiaWidget = {
           padding-bottom: 8px !important;
         }
 
-        /* Vuetify overrides */
-        .v-application {
-          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        .chat-dot {
+          height: 10px;
+          width: 10px;
+          background: #ccc;
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          border-radius: 50%;
+          animation: pulse 0.9s infinite;
+
+          &:nth-child(2) {
+            left: 14px;
+            animation-delay: 0.3s;
+          }
+
+          &:nth-child(3) {
+            left: 28px;
+            animation-delay: 0.6s;
+          }
+        }
+
+        @keyframes pulse {
+          0% {
+            opacity: 0.25;
+          }
+          50% {
+            opacity: 0.7;
+          }
+          100% {
+            opacity: 0.25;
+          }
+        }
+
+        .chip-choice {
+          color: rgba(121, 116, 126, 1) !important;
+        }
+
+        .chip-choice-selected {
+          color: rgba(236, 241, 244, 1) !important;
+          border-color: var(--v-theme-main) !important;
         }
 
         /* Fix za z-index */
@@ -101,26 +145,26 @@ const MaiiaWidget = {
           position: relative;
           z-index: 999999;
         }
-      `
-      shadow.appendChild(styles)
+      `;
+      shadow.appendChild(styles);
 
-      console.log('Widget mounted successfully with config:', options)
+      console.log("Widget mounted successfully with config:", options);
 
       return {
         app,
         pinia,
         vuetify,
         unmount: () => app.unmount(),
-      }
+      };
     } catch (error) {
-      console.error('Widget initialization failed:', error)
-      throw error
+      console.error("Widget initialization failed:", error);
+      throw error;
     }
   },
+};
+
+if (typeof window !== "undefined") {
+  window.MaiiaWidget = MaiiaWidget;
 }
 
-if (typeof window !== 'undefined') {
-  window.MaiiaWidget = MaiiaWidget
-}
-
-export default MaiiaWidget
+export default MaiiaWidget;

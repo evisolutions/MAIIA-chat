@@ -2,45 +2,117 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mojo AI</title>
-    <link rel="stylesheet" type="text/css" href="/loader.css" />
+    <title>Hotel MAIIA</title>
+
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <!-- Vue Demi -->
+    <script src="https://unpkg.com/vue-demi@0.14.7/lib/index.iife.js"></script>
+
+    <!-- Pinia -->
+    <script src="https://unpkg.com/pinia@2.1.7/dist/pinia.iife.prod.js"></script>
+
+    <!-- Vuetify -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.js"></script>
+
+    <!-- Material Design Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./dist/style.css" />
+
+    <!-- Configuration - These values would come from WordPress settings in the plugin -->
+    <script>
+      window.MaiiaConfig = {
+        // domain: "https://websiteaddon.maiiaconcierge.ai",
+        domain: "/dist",
+        propertyId: "15",
+        conversationType: "info",
+        zIndex: "9999",
+        theme: "light",
+      };
+    </script>
+
+    <!-- Widget Styles & Script -->
+    <script>
+      document.write(
+        '<script src="' +
+          window.MaiiaConfig.domain +
+          '/maiia-widget.umd.js"><\/script>'
+      );
+    </script>
+
+    <style>
+      #bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9998;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+
+      #app {
+        z-index: 9999;
+      }
+    </style>
   </head>
 
   <body>
-    <div id="app">
-      <div id="loading-bg">
-        <div class="loading">
-          <div class="effect-1 effects"></div>
-          <div class="effect-2 effects"></div>
-          <div class="effect-3 effects"></div>
-        </div>
-      </div>
-    </div>
-    <script type="module" src="/src/main.js"></script>
+    <!-- Widget Container -->
+    <div id="bg"></div>
+
+    <div id="app"></div>
+
+    <!-- Widget Initialization -->
     <script>
-      const loaderColor =
-        localStorage.getItem("materio-initial-loader-bg") || "#FFFFFF";
-      const primaryColor =
-        localStorage.getItem("materio-initial-loader-color") || "#a169ff";
+      window.addEventListener("DOMContentLoaded", () => {
+        console.log("DOM loaded, checking for widget dependencies...");
 
-      if (loaderColor)
-        document.documentElement.style.setProperty(
-          "--initial-loader-bg",
-          loaderColor
-        );
-      if (loaderColor)
-        document.documentElement.style.setProperty(
-          "--initial-loader-bg",
-          loaderColor
-        );
+        const checkDependencies = setInterval(() => {
+          if (
+            window.Vue &&
+            window.VueDemi &&
+            window.Pinia &&
+            window.Vuetify &&
+            window.MaiiaWidget
+          ) {
+            clearInterval(checkDependencies);
+            console.log("Dependencies loaded:", {
+              Vue: window.Vue.version,
+              VueDemi: !!window.VueDemi,
+              Pinia: !!window.Pinia,
+              Vuetify: !!window.Vuetify,
+              MaiiaWidget: !!window.MaiiaWidget,
+            });
 
-      if (primaryColor)
-        document.documentElement.style.setProperty(
-          "--initial-loader-color",
-          primaryColor
-        );
+            try {
+              // Initialize widget with configuration
+              const widget = window.MaiiaWidget.init("app", {
+                theme: window.MaiiaConfig.theme,
+                propertyId: window.MaiiaConfig.propertyId,
+                conversationType: window.MaiiaConfig.conversationType,
+                zIndex: window.MaiiaConfig.zIndex,
+              });
+              console.log("Widget initialized successfully");
+            } catch (error) {
+              console.error("Widget initialization error:", error);
+            }
+          } else {
+            console.log("Waiting for dependencies...");
+          }
+        }, 100);
+      });
     </script>
   </body>
 </html>

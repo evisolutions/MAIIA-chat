@@ -1,8 +1,8 @@
 export default {
   IconBtn: {
     icon: true,
-    color: 'default',
-    variant: 'text',
+    color: "default",
+    variant: "text",
   },
   VAlert: {
     VBtn: {
@@ -11,133 +11,135 @@ export default {
   },
   VAvatar: {
     // ℹ️ Remove after next release
-    variant: 'flat',
+    variant: "flat",
   },
   VBadge: {
     // set v-badge default color to primary
-    color: 'primary',
+    color: "primary",
   },
   VBtn: {
     // set v-btn default color to primary
-    color: 'primary',
+    color: "primary",
   },
   VChip: {
     elevation: 0,
   },
   VMenu: {
-    offset: '2px',
+    offset: "2px",
   },
   VPagination: {
-    density: 'comfortable',
+    density: "comfortable",
     showFirstLastPage: true,
-    variant: 'tonal',
+    variant: "tonal",
   },
   VTabs: {
     // set v-tabs default color to primary
-    color: 'primary',
+    color: "primary",
     VSlideGroup: {
       showArrows: true,
     },
   },
   VTooltip: {
     // set v-tooltip default location to top
-    location: 'top',
+    location: "top",
   },
   VCheckboxBtn: {
-    color: 'primary',
+    color: "primary",
   },
   VCheckbox: {
     // set v-checkbox default color to primary
-    color: 'primary',
-    density: 'comfortable',
-    hideDetails: 'auto',
+    color: "primary",
+    density: "comfortable",
+    hideDetails: "auto",
   },
   VRadioGroup: {
-    color: 'primary',
-    density: 'comfortable',
-    hideDetails: 'auto',
+    color: "primary",
+    density: "comfortable",
+    hideDetails: "auto",
   },
   VRadio: {
-    density: 'comfortable',
-    hideDetails: 'auto',
+    density: "comfortable",
+    hideDetails: "auto",
   },
   VSelect: {
-    variant: 'outlined',
-    color: 'primary',
-    hideDetails: 'auto',
-    density: 'comfortable',
+    variant: "outlined",
+    color: "primary",
+    hideDetails: "auto",
+    density: "comfortable",
   },
   VRangeSlider: {
     // set v-range-slider default color to primary
-    color: 'primary',
+    color: "primary",
     thumbLabel: true,
-    hideDetails: 'auto',
+    hideDetails: "auto",
     trackSize: 6,
     thumbSize: 22,
     elevation: 4,
   },
   VRating: {
     // set v-rating default color to primary
-    activeColor: 'warning',
-    color: 'disabled',
+    activeColor: "warning",
+    color: "disabled",
   },
   VProgressCircular: {
     // set v-progress-circular default color to primary
-    color: 'primary',
+    color: "primary",
   },
   VProgressLinear: {
-    color: 'primary',
+    color: "primary",
   },
   VSlider: {
     // set v-slider default color to primary
-    color: 'primary',
+    color: "primary",
     trackSize: 6,
-    hideDetails: 'auto',
+    hideDetails: "auto",
     thumbSize: 22,
     elevation: 4,
   },
   VSnackbar: {
     VBtn: {
-      size: 'small',
+      size: "small",
     },
   },
   VTextField: {
-    variant: 'outlined',
-    density: 'comfortable',
-    color: 'primary',
-    hideDetails: 'auto',
+    variant: "outlined",
+    density: "comfortable",
+    color: "primary",
+    hideDetails: "auto",
+    elevation: 0,
+    background: "#f0f2fa",
   },
   VAutocomplete: {
-    variant: 'outlined',
-    color: 'primary',
-    density: 'comfortable',
-    hideDetails: 'auto',
+    variant: "outlined",
+    color: "primary",
+    density: "comfortable",
+    hideDetails: "auto",
   },
   VCombobox: {
-    variant: 'outlined',
-    color: 'primary',
-    hideDetails: 'auto',
-    density: 'comfortable',
+    variant: "outlined",
+    color: "primary",
+    hideDetails: "auto",
+    density: "comfortable",
   },
   VFileInput: {
-    variant: 'outlined',
-    color: 'primary',
-    hideDetails: 'auto',
-    density: 'comfortable',
+    variant: "outlined",
+    color: "primary",
+    hideDetails: "auto",
+    density: "comfortable",
   },
   VTextarea: {
-    variant: 'outlined',
-    color: 'primary',
-    hideDetails: 'auto',
-    density: 'comfortable',
+    variant: "outlined",
+    color: "primary",
+    hideDetails: "auto",
+    density: "comfortable",
   },
   VSwitch: {
     // set v-switch default color to primary
     inset: true,
-    color: 'primary',
-    hideDetails: 'auto',
+    color: "primary",
+    hideDetails: "auto",
   },
   VNavigationDrawer: {
     touchless: true,
   },
-}
+};
