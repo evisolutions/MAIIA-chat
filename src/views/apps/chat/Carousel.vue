@@ -37,10 +37,10 @@
             cursor: 'pointer',
             borderRadius: '16px',
             backgroundColor: '#fff',
-            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 6px',
             overflow: 'hidden',
+            border: '1px solid rgba(202, 196, 208, 1)',
           }"
-          @click="handleArticleClick(item)"
+          @click="handleArticleClick(item, messageId)"
         >
           <!-- Image -->
           <VImg
@@ -58,27 +58,28 @@
           <div class="pa-4">
             <VCardTitle
               class="pa-0"
-              :style="{
-                fontSize: '16px',
-                fontWeight: 'bold',
-                marginBottom: '4px',
-                userSelect: 'none',
-              }"
+              style="
+                font-size: 16px;
+                font-weight: bold;
+                margin-bottom: 4px;
+                user-select: none;
+              "
             >
               {{ item.name }}
             </VCardTitle>
             <VCardText
               class="pa-0"
-              :style="{
-                fontSize: '14px',
-                color: '#666',
-                display: '-webkit-box',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: '2',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                userSelect: 'none',
-              }"
+              style="
+                font-size: 14px;
+                color: #666;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                user-select: none;
+                line-height: 18px;
+              "
             >
               {{ item.description }}
             </VCardText>
@@ -202,12 +203,12 @@ const next = () => {
   }
 };
 
-const handleArticleClick = (item) => {
+const handleArticleClick = (item, messageId) => {
   if (isDrag.value) {
     isDrag.value = false;
     return;
   }
-  emit("article-click", item);
+  emit("article-click", item, messageId);
 };
 
 const buttonStyle = (position) => ({
