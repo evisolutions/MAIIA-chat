@@ -57,4 +57,7 @@ export default defineConfig({
       generateScopedName: "mojo-[hash:base64:5]",
     },
   },
+  define: {
+    'process.env': {},
+  },
 })
