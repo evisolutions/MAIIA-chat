@@ -1,4 +1,6 @@
 <script setup>
+import { useI18n } from "vue-i18n";
+
 const props = defineProps({
   languages: {
     type: Array,
@@ -7,11 +9,11 @@ const props = defineProps({
   location: {
     type: null,
     required: false,
-    default: 'bottom end',
+    default: "bottom end",
   },
-})
+});
 
-const { locale } = useI18n({ useScope: 'global' })
+const { locale } = useI18n({ useScope: "global" });
 </script>
 
 <template>
@@ -26,11 +28,7 @@ const { locale } = useI18n({ useScope: 'global' })
       width="160"
     >
       <!-- List -->
-      <VList
-        :selected="[locale]"
-        color="primary"
-        mandatory
-      >
+      <VList :selected="[locale]" color="primary" mandatory>
         <!-- List item -->
         <VListItem
           v-for="lang in props.languages"

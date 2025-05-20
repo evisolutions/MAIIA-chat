@@ -246,9 +246,8 @@ export const useChatStore = defineStore("chat", {
             createdAt: new Date(),
             messageId: 1,
             choices:
-              this.property.welcomeSelectMessages.length > 0 &&
-              this.property.welcomeSelectMessages[0] !== ""
-                ? this.property.welcomeSelectMessages
+              this.property.welcomeSelectMessages !== ""
+                ? this.property.welcomeSelectMessages.split(",")
                 : ["Sobe", "Sadržaji hotela", "Restoran"],
             initialOptions: true,
           },

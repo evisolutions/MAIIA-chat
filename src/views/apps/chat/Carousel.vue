@@ -1,7 +1,7 @@
 <template>
   <div style="position: relative">
     <div
-      class="py-2"
+      class="pt-2 pb-5"
       :style="{
         width: '100%',
         overflow: 'hidden',
@@ -38,7 +38,8 @@
             borderRadius: '16px',
             backgroundColor: '#fff',
             overflow: 'hidden',
-            border: '1px solid rgba(202, 196, 208, 1)',
+            boxShadow:
+              '0px 4px 6px -2px rgba(0, 0, 0, 0.05), 0px 10px 15px -3px rgba(0, 0, 0, 0.1)',
           }"
           @click="handleArticleClick(item, messageId)"
         >
@@ -60,7 +61,7 @@
               class="pa-0"
               style="
                 font-size: 16px;
-                font-weight: bold;
+                font-weight: 800;
                 margin-bottom: 4px;
                 user-select: none;
               "

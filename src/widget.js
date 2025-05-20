@@ -48,12 +48,12 @@ const MaiiaWidget = {
       styles.textContent = `
         @import url('https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css');
         @import url('https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css');
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 
         /* Custom stilovi za widget */
-        .v-application {
-          font-family: "Poppins", sans-serif !important;
+        * {
+          font-family: "Inter", sans-serif !important;
         }
 
         .chat-app-layout {
@@ -75,8 +75,8 @@ const MaiiaWidget = {
           color: #1b202d !important;
         }
 
-        .chat-message-input .v-field__input {
-          padding-left: 24px !important;
+        .v-field__append-inner {
+          cursor: pointer !important;
         }
 
         .chat-btn {
@@ -142,7 +142,6 @@ const MaiiaWidget = {
 
         /* Fix za z-index */
         #app {
-          position: relative;
           z-index: 999999;
         }
       `;

@@ -170,12 +170,14 @@ const handleArticleClick = (article, messageId) => {
               v-if="msgData.type === 'basic'"
               v-html="msgData.text"
               class="mb-0 pre-line"
+              style="line-height: 21px; font-size: 14px"
             ></p>
 
             <p
               v-if="msgData.type === 'multi-choice'"
               v-html="msgData.text"
               class="mb-0 pre-line"
+              style="line-height: 21px; font-size: 14px"
             ></p>
 
             <div v-if="msgData.type === 'carousel'" style="position: relative">
@@ -189,31 +191,31 @@ const handleArticleClick = (article, messageId) => {
           <div
             v-if="msgData.type === 'multi-choice'"
             class="d-flex flex-wrap mt-2 mb-1"
-            style="column-gap: 6px"
+            style="gap: 6px"
           >
             <VChip
               v-for="(choice, index) in msgData.choices"
               :key="index"
               @click="handleSendMessageFromChoice(choice)"
               :variant="choice === selectedChoice ? 'elevated' : 'outlined'"
-              class="cursor-pointer text-wrap chip-choice"
+              class="cursor-pointer text-wrap chip-choice py-1"
               :class="{ 'chip-choice-selected': choice === selectedChoice }"
               :disabled="store.loading"
               size="x-small"
               style="
                 height: fit-content !important;
-                border: 1px solid rgba(121, 116, 126, 1);
-                color: rgba(73, 69, 79, 1);
+                border: 1px solid var(--v-theme-main);
+                color: var(--v-theme-main);
+                font-size: 12px;
               "
               :style="{
                 backgroundColor:
                   choice === selectedChoice ? 'var(--v-theme-main)' : '',
                 color:
-                  choice === selectedChoice ? 'rgba(236, 241, 244, 1)' : '',
-                borderColor:
                   choice === selectedChoice
-                    ? 'var(--v-theme-main)'
-                    : 'rgba(121, 116, 126, 1)',
+                    ? 'rgba(236, 241, 244, 1)'
+                    : 'var(--v-theme-main)',
+                borderColor: 'var(--v-theme-main)',
               }"
               >{{ choice }}</VChip
             >

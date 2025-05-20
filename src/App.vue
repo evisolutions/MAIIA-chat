@@ -24,7 +24,7 @@
                   maxWidth: '505px',
                   height: '85vh',
                   maxHeight: '800px',
-                  borderRadius: '28px',
+                  borderRadius: '16px 16px 20px 20px',
                 }
           "
         >
@@ -45,7 +45,7 @@
             >
               <!-- 👉 Active chat header -->
               <div
-                class="active-chat-header d-flex align-center pa-4"
+                class="active-chat-header d-flex align-center px-4 py-3"
                 style="
                   box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.06),
                     0px 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -54,7 +54,7 @@
                 <div class="d-flex align-center" style="flex: 1 1 0%">
                   <img
                     :src="store.property.addOnIconUrl"
-                    style="height: 50px"
+                    style="height: 44px; aspect-ratio: 1"
                   />
                   <div
                     class="d-flex flex-column align-start justify-center ml-4"
@@ -72,10 +72,14 @@
                       {{ aiInteractiveAssistant }}
                     </p>
                   </div>
+
+                  <I18n location="chat-header" />
+
                   <span
                     v-if="vuetifyDisplays.width.value < 480"
                     @click="showChat = false"
-                    class="text-body-2 text-gray-50 cursor-pointer ml-auto"
+                    class="text-body-2 text-gray-50 cursor-pointer ml-auto align-self-start"
+                    style="color: rgba(27, 32, 45, 0.5)"
                     >&#10006;</span
                   >
                 </div>
@@ -98,7 +102,7 @@
 
               <!-- Message form -->
               <VForm
-                class="chat-log-message-form mb-5 mx-5"
+                class="chat-log-message-form d-flex align-center justify-center mx-5 my-2"
                 @submit.prevent="sendMessage"
               >
                 <VTextField
@@ -112,12 +116,21 @@
                   hide-details
                   :style="chatTextFieldStyle"
                 >
+                  <template #prepend-inner>
+                    <p
+                      v-html="LightbulbIcon"
+                      width="20"
+                      height="20"
+                      class="d-flex ms-1"
+                      @click="sendMessage"
+                    />
+                  </template>
                   <template #append-inner>
                     <p
                       v-html="SendIcon"
-                      width="24"
-                      height="24"
-                      class="me-4 d-flex cursor-pointer"
+                      width="20"
+                      height="20"
+                      class="d-flex cursor-pointer me-2"
                       @click="sendMessage"
                     />
                   </template>
@@ -139,7 +152,8 @@
 </template>
 
 <script setup>
-import SendIcon from "@/assets/images/svg/send-msg.svg?raw";
+import LightbulbIcon from "@/assets/images/svg/lightbulb-icon.svg?raw";
+import SendIcon from "@/assets/images/svg/send-icon.svg?raw";
 import ChatLog from "@/views/apps/chat/ChatLog.vue";
 import { useChatStore } from "@/views/apps/chat/useChatStore";
 import "@styles/styles.scss";
@@ -175,6 +189,7 @@ onMounted(async () => {
 });
 
 import { themes } from "@/plugins/vuetify/theme";
+import I18n from "./@core/components/I18n.vue";
 
 // composables
 const vuetifyDisplays = useDisplay();
@@ -299,4 +314,8 @@ const chatTextFieldStyle = computed(() => ({
 }));
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.v-field__append-inner {
+  cursor: pointer !important;
+}
+</style>
