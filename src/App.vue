@@ -79,7 +79,10 @@
                     </p>
                   </div>
 
-                  <I18n location="chat-header" />
+                  <I18n
+                    :languages="languages"
+                    location="chat-header"
+                  />
 
                   <span
                     v-if="vuetifyDisplays.width.value < 480"
@@ -164,6 +167,12 @@ import SendIcon from "@images/svg/send-icon.svg?raw"
 import "@styles/styles.scss"
 import { computed, inject, nextTick, onMounted, ref, watch } from "vue"
 import { useDisplay, useTheme } from "vuetify"
+import I18n from "./@core/components/I18n.vue"
+
+const languages = [
+  { i18nLang: 'en', label: 'English' },
+  { i18nLang: 'sr', label: 'Srpski' },
+]
 
 // Get widget configuration from injection
 const widgetConfig = inject("widgetConfig", {})
@@ -195,7 +204,6 @@ onMounted(async () => {
 })
 
 import { themes } from "@/plugins/vuetify/theme"
-import I18n from "./@core/components/I18n.vue"
 
 // composables
 const vuetifyDisplays = useDisplay()

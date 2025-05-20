@@ -1,16 +1,10 @@
+import en from '@/locales/en.json'
+import sr from '@/locales/sr.json'
 import { createI18n } from 'vue-i18n'
 
 const messages = {
-  en: {
-    welcome: 'Welcome to MAIIA Chat!',
-    send: 'Send',
-    placeholder: 'Type your message...',
-  },
-  sr: {
-    welcome: 'Dobrodošli u MAIIA Čet!',
-    send: 'Pošalji',
-    placeholder: 'Unesite vašu poruku...',
-  },
+  en,
+  sr,
 }
 
 export default function (locale = 'en') {
