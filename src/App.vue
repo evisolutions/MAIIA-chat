@@ -1,6 +1,11 @@
 <template>
   <VApp>
     <VMain>
+      <div>
+        <h2>{{ $t('welcome') }}</h2>
+        <input :placeholder="$t('placeholder')">
+        <button>{{ $t('send') }}</button>
+      </div>
       <div
         class="d-flex flex-column align-end w-100 position-fixed"
         :style="widgetContainerStyle"
@@ -11,21 +16,21 @@
           :style="
             vuetifyDisplays.width.value < 480
               ? {
-                  width: '100vw',
-                  maxWidth: '100vw',
-                  height: '100dvh',
-                  maxHeight: '100dvh',
-                  top: 0,
-                  left: 0,
-                  borderRadius: '0px',
-                }
+                width: '100vw',
+                maxWidth: '100vw',
+                height: '100dvh',
+                maxHeight: '100dvh',
+                top: 0,
+                left: 0,
+                borderRadius: '0px',
+              }
               : {
-                  width: '90vw',
-                  maxWidth: '505px',
-                  height: '85vh',
-                  maxHeight: '800px',
-                  borderRadius: '16px 16px 20px 20px',
-                }
+                width: '90vw',
+                maxWidth: '505px',
+                height: '85vh',
+                maxHeight: '800px',
+                borderRadius: '16px 16px 20px 20px',
+              }
           "
         >
           <!-- 👉 Chat content -->
@@ -47,27 +52,28 @@
               <div
                 class="active-chat-header d-flex align-center px-4 py-3"
                 style="
-                  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.06),
-                    0px 4px 6px -1px rgba(0, 0, 0, 0.1);
+                  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 6%),
+                    0 4px 6px -1px rgba(0, 0, 0, 10%);
                 "
               >
-                <div class="d-flex align-center" style="flex: 1 1 0%">
+                <div
+                  class="d-flex align-center"
+                  style="flex: 1 1 0%"
+                >
                   <img
                     :src="store.property.addOnIconUrl"
-                    style="height: 44px; aspect-ratio: 1"
-                  />
-                  <div
-                    class="d-flex flex-column align-start justify-center ml-4"
+                    style=" aspect-ratio: 1;block-size: 44px"
                   >
+                  <div class="d-flex flex-column align-start justify-center ml-4">
                     <h3
                       class="heading-3 text-dark-gray"
-                      style="color: rgba(27, 32, 45, 1)"
+                      style="color: rgba(27, 32, 45, 100%)"
                     >
                       {{ store.property.botName }}
                     </h3>
                     <p
                       class="text-body-2 text-gray-50"
-                      style="color: rgba(27, 32, 45, 0.5)"
+                      style="color: rgba(27, 32, 45, 50%)"
                     >
                       {{ aiInteractiveAssistant }}
                     </p>
@@ -77,24 +83,23 @@
 
                   <span
                     v-if="vuetifyDisplays.width.value < 480"
-                    @click="showChat = false"
                     class="text-body-2 text-gray-50 cursor-pointer ml-auto align-self-start"
-                    style="color: rgba(27, 32, 45, 0.5)"
-                    >&#10006;</span
-                  >
+                    style="color: rgba(27, 32, 45, 50%)"
+                    @click="showChat = false"
+                  >&#10006;</span>
                 </div>
               </div>
 
               <!-- Chat log -->
               <ul
-                class="flex-grow-1 my-1"
                 ref="chatLogPS"
+                class="flex-grow-1 my-1"
                 style="
-                  height: auto;
-                  overflow-y: auto;
-                  scrollbar-width: none; /* Firefox */
+                  block-size: auto;
                   -ms-overflow-style: none; /* IE and Edge */
+                  overflow-y: auto;
                   scroll-behavior: smooth;
+                  scrollbar-width: none; /* Firefox */
                 "
               >
                 <ChatLog @send-message="handleSendMessageFromChoice" />
@@ -118,20 +123,20 @@
                 >
                   <template #prepend-inner>
                     <p
-                      v-html="LightbulbIcon"
                       width="20"
                       height="20"
                       class="d-flex ms-1"
                       @click="sendMessage"
+                      v-html="LightbulbIcon"
                     />
                   </template>
                   <template #append-inner>
                     <p
-                      v-html="SendIcon"
                       width="20"
                       height="20"
                       class="d-flex cursor-pointer me-2"
                       @click="sendMessage"
+                      v-html="SendIcon"
                     />
                   </template>
                 </VTextField>
@@ -152,130 +157,131 @@
 </template>
 
 <script setup>
-import LightbulbIcon from "@/assets/images/svg/lightbulb-icon.svg?raw";
-import SendIcon from "@/assets/images/svg/send-icon.svg?raw";
-import ChatLog from "@/views/apps/chat/ChatLog.vue";
-import { useChatStore } from "@/views/apps/chat/useChatStore";
-import "@styles/styles.scss";
-import { computed, inject, nextTick, onMounted, ref, watch } from "vue";
-import { useDisplay, useTheme } from "vuetify";
+import ChatLog from "@/views/apps/chat/ChatLog.vue"
+import { useChatStore } from "@/views/apps/chat/useChatStore"
+import LightbulbIcon from "@images/svg/lightbulb-icon.svg?raw"
+import SendIcon from "@images/svg/send-icon.svg?raw"
+import "@styles/styles.scss"
+import { computed, inject, nextTick, onMounted, ref, watch } from "vue"
+import { useDisplay, useTheme } from "vuetify"
+
 // Get widget configuration from injection
-const widgetConfig = inject("widgetConfig", {});
+const widgetConfig = inject("widgetConfig", {})
 
 // Get options from widget initialization if available
-const options = window.MAIIAWidgetOptions || {};
-const widgetZIndex = ref(widgetConfig.zIndex || options.zIndex || 9999);
+const options = window.MAIIAWidgetOptions || {}
+const widgetZIndex = ref(widgetConfig.zIndex || options.zIndex || 9999)
 
-const { global } = useTheme();
-const chatStore = useChatStore();
+const { global } = useTheme()
+const chatStore = useChatStore()
 
 const aiInteractiveAssistant = computed(() => {
-  return "AI interactive assistant";
-});
+  return "AI interactive assistant"
+})
 
 const messagePlaceholder = computed(() => {
-  return "Message" + "...";
-});
+  return "Message" + "..."
+})
 
 onMounted(async () => {
   // Use propertyId from widget configuration instead of environment variable
-  const propertyId = widgetConfig.propertyId;
+  const propertyId = widgetConfig.propertyId
 
   if (propertyId) {
-    await chatStore.fetchProperty(propertyId);
+    await chatStore.fetchProperty(propertyId)
   }
 
-  chatStore.setInitialChat();
-});
+  chatStore.setInitialChat()
+})
 
-import { themes } from "@/plugins/vuetify/theme";
-import I18n from "./@core/components/I18n.vue";
+import { themes } from "@/plugins/vuetify/theme"
+import I18n from "./@core/components/I18n.vue"
 
 // composables
-const vuetifyDisplays = useDisplay();
-const store = useChatStore();
+const vuetifyDisplays = useDisplay()
+const store = useChatStore()
 
 // Perfect scrollbar
-const chatLogPS = ref();
+const chatLogPS = ref()
 
 const scrollToBottomInChatLog = () => {
-  if (!chatLogPS.value) return;
+  if (!chatLogPS.value) return
 
-  const scrollEl = chatLogPS.value.$el || chatLogPS.value;
+  const scrollEl = chatLogPS.value.$el || chatLogPS.value
 
-  scrollEl.scrollTop = scrollEl.scrollHeight;
-};
+  scrollEl.scrollTop = scrollEl.scrollHeight
+}
 
-const showChat = ref(false);
-const isLoading = ref(false);
+const showChat = ref(false)
+const isLoading = ref(false)
 
 // Chat message
-const msg = ref("");
+const msg = ref("")
 
 const sendMessage = async () => {
-  if (!msg.value) return;
+  if (!msg.value) return
 
   const sendMessageAndScroll = async () => {
     setTimeout(() => {
-      scrollToBottomInChatLog();
-    }, 100);
-    await store.sendMsg(msg.value);
-  };
+      scrollToBottomInChatLog()
+    }, 100)
+    await store.sendMsg(msg.value)
+  }
 
-  await sendMessageAndScroll();
-  scrollToBottomInChatLog();
+  await sendMessageAndScroll()
+  scrollToBottomInChatLog()
 
   // Reset message input
-  msg.value = "";
-};
+  msg.value = ""
+}
 
 // file input
-const refInputEl = ref();
+const refInputEl = ref()
 
-const { name } = useTheme();
+const { name } = useTheme()
 
 const chatContentContainerBg = computed(() => {
-  let color = "transparent";
-  if (themes) color = themes?.[name.value].colors?.["chat-bg"];
+  let color = "transparent"
+  if (themes) color = themes?.[name.value].colors?.["chat-bg"]
 
-  return color;
-});
+  return color
+})
 
-const handleSendMessageFromChoice = async (message) => {
+const handleSendMessageFromChoice = async message => {
   const sendMessageAndScroll = async () => {
     setTimeout(() => {
-      scrollToBottomInChatLog();
-    }, 100);
-    await store.sendMsg(message);
-  };
+      scrollToBottomInChatLog()
+    }, 100)
+    await store.sendMsg(message)
+  }
 
-  await sendMessageAndScroll();
-  scrollToBottomInChatLog();
-};
+  await sendMessageAndScroll()
+  scrollToBottomInChatLog()
+}
 
 onMounted(() => {
-  store.getChat();
-});
+  store.getChat()
+})
 
 watch(
   () => store.activeChat,
   () => {
     nextTick(() => {
-      scrollToBottomInChatLog();
-    });
-  }
-);
+      scrollToBottomInChatLog()
+    })
+  },
+)
 
 watch(
   () => showChat.value,
-  (val) => {
+  val => {
     if (val) {
       nextTick(() => {
-        scrollToBottomInChatLog();
-      });
+        scrollToBottomInChatLog()
+      })
     }
-  }
-);
+  },
+)
 
 // Responsive widget style
 const widgetContainerStyle = computed(() => {
@@ -288,14 +294,15 @@ const widgetContainerStyle = computed(() => {
       width: "100vw",
       height: "100dvh",
       zIndex: widgetZIndex.value,
-    };
+    }
   }
+  
   return {
     right: "20px",
     bottom: "90px",
     zIndex: widgetZIndex.value,
-  };
-});
+  }
+})
 
 // Style for the activation bot icon (VImg)
 const botIconStyle = computed(() => ({
@@ -305,13 +312,13 @@ const botIconStyle = computed(() => ({
   width: "60px",
   height: "60px",
   zIndex: widgetZIndex.value,
-}));
+}))
 
 // Style for the chat message input (VTextField)
 const chatTextFieldStyle = computed(() => ({
   // boxShadow: "none",
   // backgroundColor: "#f0f2fa",
-}));
+}))
 </script>
 
 <style lang="scss">

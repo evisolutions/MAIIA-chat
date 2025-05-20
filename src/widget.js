@@ -1,49 +1,55 @@
-import App from "./App.vue";
+import createI18n from '@/plugins/i18n'
+import App from "./App.vue"
 
 const MaiiaWidget = {
   init(containerId, options = {}) {
-    if (!window.Vue) throw new Error("Vue is not loaded");
-    if (!window.Vuetify) throw new Error("Vuetify is not loaded");
-    if (!window.Pinia) throw new Error("Pinia is not loaded");
+    if (!window.Vue) throw new Error("Vue is not loaded")
+    if (!window.Vuetify) throw new Error("Vuetify is not loaded")
+    if (!window.Pinia) throw new Error("Pinia is not loaded")
 
     try {
       // Kreiramo Shadow DOM container
-      const container = document.getElementById(containerId);
-      const shadow = container.attachShadow({ mode: "open" });
+      const container = document.getElementById(containerId)
+      const shadow = container.attachShadow({ mode: "open" })
 
       // Kreiramo mount point unutar Shadow DOM-a
-      const mountPoint = document.createElement("div");
+      const mountPoint = document.createElement("div")
 
-      shadow.appendChild(mountPoint);
+      shadow.appendChild(mountPoint)
 
-      const app = window.Vue.createApp(App);
+      const app = window.Vue.createApp(App)
 
       // Kreiramo i dodamo Pinia
-      const pinia = window.Pinia.createPinia();
+      const pinia = window.Pinia.createPinia()
 
-      app.use(pinia);
+      app.use(pinia)
 
       // Dodajemo globalne parametre
       app.provide("widgetConfig", {
         propertyId: options.propertyId,
         conversationType: options.conversationType,
         zIndex: options.zIndex,
-      });
+      })
 
       // Kreiramo i dodamo Vuetify
       const vuetify = window.Vuetify.createVuetify({
         theme: {
           defaultTheme: options.theme || "light",
         },
-      });
+      })
 
-      app.use(vuetify);
+      app.use(vuetify)
+
+      // Dodajemo i18n
+      const i18n = createI18n(options.locale || 'en')
+
+      app.use(i18n)
 
       // Mountamo app u Shadow DOM
-      app.mount(mountPoint);
+      app.mount(mountPoint)
 
       // Dodajemo potrebne stilove u Shadow DOM
-      const styles = document.createElement("style");
+      const styles = document.createElement("style")
 
       styles.textContent = `
         @import url('https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css');
@@ -144,26 +150,27 @@ const MaiiaWidget = {
         #app {
           z-index: 999999;
         }
-      `;
-      shadow.appendChild(styles);
+      `
+      shadow.appendChild(styles)
 
-      console.log("Widget mounted successfully with config:", options);
+      console.log("Widget mounted successfully with config:", options)
 
       return {
         app,
         pinia,
         vuetify,
+        i18n,
         unmount: () => app.unmount(),
-      };
+      }
     } catch (error) {
-      console.error("Widget initialization failed:", error);
-      throw error;
+      console.error("Widget initialization failed:", error)
+      throw error
     }
   },
-};
-
-if (typeof window !== "undefined") {
-  window.MaiiaWidget = MaiiaWidget;
 }
 
-export default MaiiaWidget;
+if (typeof window !== "undefined") {
+  window.MaiiaWidget = MaiiaWidget
+}
+
+export default MaiiaWidget
