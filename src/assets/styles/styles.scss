@@ -12,3 +12,7 @@
     position: absolute !important;
 }
 
+.v-menu.v-overlay--active {
+    z-index: 999999 !important;
+}
+

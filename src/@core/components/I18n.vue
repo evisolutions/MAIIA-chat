@@ -1,4 +1,5 @@
 <script setup>
+import TranslateIcon from "@images/svg/translate-2.svg?raw";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps({
@@ -18,7 +19,13 @@ const { locale } = useI18n({ useScope: "global" });
 
 <template>
   <IconBtn>
-    <VIcon icon="ri-translate-2" />
+    <p
+      width="20"
+      height="20"
+      class="d-flex ms-1"
+      @click="sendMessage"
+      v-html="TranslateIcon"
+    />
 
     <!-- Menu -->
     <VMenu
