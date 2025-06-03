@@ -15,6 +15,10 @@ apiClient.interceptors.request.use((config) => {
   config.headers["Content-Type"] = "application/json";
   config.headers["X-API-KEY"] = API_KEY;
 
+  config.params = {
+    translateLanguage: localStorage.getItem("locale"),
+  };
+
   return config;
 });
 

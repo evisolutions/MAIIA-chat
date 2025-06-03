@@ -29,7 +29,7 @@
           v-for="(item, index) in articles"
           :key="index"
           :style="{
-            width: '280px',
+            width: '270px',
             flexShrink: '0',
             display: 'flex',
             flexDirection: 'column',
@@ -139,7 +139,7 @@ const props = defineProps({
 
 const emit = defineEmits(["article-click"]);
 
-const itemWidth = 300; // 280px card + 20px gap
+const itemWidth = 290; // 270px card + 20px gap
 
 // Carousel state
 const translateX = ref(0);
@@ -216,7 +216,7 @@ const buttonStyle = (position) => ({
   position: "absolute",
   top: "50%",
   transform: "translateY(-50%)",
-  background: "rgba(242, 244, 251, 1)",
+  background: "rgba(242, 244, 251, 0.9)",
   border: "none",
   height: "60px",
   width: "60px",

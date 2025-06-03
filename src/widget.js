@@ -150,6 +150,13 @@ const MaiiaWidget = {
         #app {
           z-index: 999999;
         }
+
+        .heading-3 {
+          font-family: "Work Sans", sans-serif !important;
+          font-weight: 700;
+          font-size: 20px;
+        }
+
       `;
       shadow.appendChild(styles);
 

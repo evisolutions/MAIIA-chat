@@ -38,6 +38,31 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
           i18nLang: "sr",
           isRTL: false,
         },
+        {
+          label: "Français",
+          i18nLang: "fr",
+          isRTL: false,
+        },
+        {
+          label: "Italiano",
+          i18nLang: "it",
+          isRTL: false,
+        },
+        {
+          label: "Deutsch",
+          i18nLang: "de",
+          isRTL: false,
+        },
+        {
+          label: "Español",
+          i18nLang: "es",
+          isRTL: false,
+        },
+        {
+          label: "Русский",
+          i18nLang: "ru",
+          isRTL: false,
+        },
       ],
     },
     theme: "system",

@@ -104,13 +104,13 @@
 
               <!-- Message form -->
               <VForm
-                class="chat-log-message-form d-flex align-center justify-center mx-5 my-2"
+                class="chat-log-message-form d-flex align-center justify-center mx-5 my-3"
                 @submit.prevent="sendMessage"
               >
                 <VTextField
                   v-model="msg"
                   variant="solo"
-                  density="default"
+                  density="compact"
                   class="chat-message-input"
                   :placeholder="$t('Message') + '...'"
                   :disabled="store.loading"
@@ -165,8 +165,13 @@ import { useDisplay, useTheme } from "vuetify";
 import I18n from "./@core/components/I18n.vue";
 
 const languages = [
-  { i18nLang: "en", label: "English" },
-  { i18nLang: "sr", label: "Srpski" },
+  { i18nLang: "en", label: "English", icon: "GB" },
+  { i18nLang: "sr", label: "Srpski", icon: "RS" },
+  { i18nLang: "fr", label: "Français", icon: "FR" },
+  { i18nLang: "it", label: "Italiano", icon: "IT" },
+  { i18nLang: "de", label: "Deutsch", icon: "DE" },
+  { i18nLang: "es", label: "Español", icon: "ES" },
+  { i18nLang: "ru", label: "Русский", icon: "RU" },
 ];
 
 const { locale } = useI18n({ useScope: "global" });
@@ -298,6 +303,7 @@ const widgetContainerStyle = computed(() => {
     right: "20px",
     bottom: "90px",
     zIndex: widgetZIndex.value,
+    width: "0px !important",
   };
 });
 

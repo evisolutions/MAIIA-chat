@@ -1,6 +1,6 @@
 <script setup>
 import { useChatStore } from "@/views/apps/chat/useChatStore";
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import "vue3-carousel/dist/carousel.css";
 import { VAvatar, VChip, VImg } from "vuetify/lib/components/index.mjs";
 import Carousel from "./Carousel.vue";
@@ -14,6 +14,13 @@ const chatAssistantId = 1;
 const selectedChoice = ref(null);
 // Add a new ref to track if a drag occurred
 const isDrag = ref(false);
+
+// Animated loading strings and dots
+const loadingStrings = ["thinking", "analyzing", "formulating response"];
+const loadingIndex = ref(0);
+const dotCount = ref(1);
+let stringInterval = null;
+let dotInterval = null;
 
 const msgGroups = computed(() => {
   if (!store.activeChat || !store.activeChat.messages) return [];
@@ -86,6 +93,46 @@ const handleArticleClick = (article, messageId) => {
 
   window.open(article.redirectUrl, "_blank");
 };
+
+onMounted(() => {
+  if (store.loading) {
+    startLoadingAnimation();
+  }
+});
+
+watch(
+  () => store.loading,
+  (val) => {
+    if (val) {
+      startLoadingAnimation();
+    } else {
+      stopLoadingAnimation();
+    }
+  }
+);
+
+function startLoadingAnimation() {
+  loadingIndex.value = 0;
+  dotCount.value = 1;
+  stopLoadingAnimation();
+  stringInterval = setInterval(() => {
+    loadingIndex.value = (loadingIndex.value + 1) % loadingStrings.length;
+  }, 4000);
+  dotInterval = setInterval(() => {
+    dotCount.value = (dotCount.value % 3) + 1;
+  }, 500);
+}
+
+function stopLoadingAnimation() {
+  if (stringInterval) clearInterval(stringInterval);
+  if (dotInterval) clearInterval(dotInterval);
+  stringInterval = null;
+  dotInterval = null;
+}
+
+onUnmounted(() => {
+  stopLoadingAnimation();
+});
 </script>
 
 <template>
@@ -235,6 +282,7 @@ const handleArticleClick = (article, messageId) => {
               letter-spacing: 0%;
               text-align: right;
               color: rgba(121, 124, 123, 1);
+              transform: translateX(10px);
             "
           >
             {{
@@ -262,10 +310,17 @@ const handleArticleClick = (article, messageId) => {
             box-shadow: none;
           "
         >
-          <div style="position: relative; height: 22px; width: 36px">
-            <span class="chat-dot"></span>
-            <span class="chat-dot"></span>
-            <span class="chat-dot"></span>
+          <div
+            style="
+              position: relative;
+              min-height: 22px;
+              min-width: 120px;
+              font-size: 15px;
+              font-style: italic;
+            "
+          >
+            {{ $t(loadingStrings[loadingIndex])
+            }}<span v-for="n in dotCount" :key="n">.</span>
           </div>
         </div>
       </div>

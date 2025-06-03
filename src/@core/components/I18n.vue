@@ -1,5 +1,5 @@
 <script setup>
-import TranslateIcon from "@images/svg/translate-2.svg?raw";
+import { onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps({
@@ -15,16 +15,32 @@ const props = defineProps({
 });
 
 const { locale } = useI18n({ useScope: "global" });
+
+// Set locale from localStorage on mount
+onMounted(() => {
+  const storedLang = localStorage.getItem("locale");
+  if (storedLang && storedLang !== locale.value) {
+    locale.value = storedLang;
+  }
+});
+
+// Function to handle language change and store in localStorage
+function setLocale(lang) {
+  locale.value = lang;
+  localStorage.setItem("locale", lang);
+}
 </script>
 
 <template>
   <IconBtn>
-    <p
-      width="20"
-      height="20"
+    <img
+      :src="`https://flagsapi.com/${
+        props.languages.find((lang) => lang.i18nLang === locale)?.icon
+      }/flat/32.png`"
+      width="24"
+      height="24"
       class="d-flex ms-1"
-      @click="sendMessage"
-      v-html="TranslateIcon"
+      alt="Selected language flag"
     />
 
     <!-- Menu -->
@@ -41,9 +57,17 @@ const { locale } = useI18n({ useScope: "global" });
           v-for="lang in props.languages"
           :key="lang.i18nLang"
           :value="lang.i18nLang"
-          @click="locale = lang.i18nLang"
+          @click="setLocale(lang.i18nLang)"
+          class="language-item"
         >
           <!-- Language label -->
+          <VListItemIcon>
+            <img
+              :src="`https://flagsapi.com/${lang.icon}/flat/32.png`"
+              width="24"
+              height="24"
+            />
+          </VListItemIcon>
           <VListItemTitle>{{ lang.label }}</VListItemTitle>
         </VListItem>
       </VList>

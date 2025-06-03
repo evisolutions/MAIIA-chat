@@ -1,4 +1,7 @@
 {
     "AI interactive assistant": "AI interactive assistant",
-    "Message": "Message"
+    "Message": "Message",
+    "thinking": "thinking",
+    "analyzing": "analyzing",
+    "formulating response": "formulating response"
 }
