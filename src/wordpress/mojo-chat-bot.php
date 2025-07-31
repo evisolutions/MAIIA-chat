@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Mojo AI Chatbot
- * Description: A simple plugin to embed Mojo AI Chatbot into Wordpress.
+ * Plugin Name: MAIIA AI Chatbot
+ * Description: A simple plugin to embed MAIIA AI Chatbot into Wordpress.
  * Version: 1.0
- * Author: Mojo AI and Evi Solutions Collab Team
+ * Author: MAIIA AI and Evi Solutions Collab Team
  */
 
 if (!defined('ABSPATH')) {

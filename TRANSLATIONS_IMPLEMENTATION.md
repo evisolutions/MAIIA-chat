@@ -10,6 +10,10 @@ This document describes the implementation of multi-language support for the MAI
 
 The new translations system uses the following data structure from the API endpoint `/property/fetch-single?propertyId=15`:
 
+**Note:** 
+- `label` is used for displaying the choice button text to users (e.g., "about hotel")
+- `labelText` is used for sending the actual message to the backend when the user clicks the choice (e.g., "What can you tell me about the hotel and its amenities?")
+
 ```json
 {
   "translations": {
@@ -51,12 +55,14 @@ The new translations system uses the following data structure from the API endpo
    - Added logic to detect current locale from `localStorage`
    - Implemented fallback chain: current locale → English → old system
    - Uses `translations.websiteAddon[locale].welcomeText` for welcome message
-   - Uses `translations.websiteAddon[locale].labels[].labelText` for choice buttons
+   - Uses `translations.websiteAddon[locale].labels[].label` for choice buttons (display text)
+   - Uses `translations.websiteAddon[locale].labels[].labelText` for backend communication when user clicks a choice
 
 2. **Added `updateInitialChatForLanguage()` method:**
    - Updates the initial chat message when language changes
    - Only updates if there's exactly one message (initial state)
    - Maintains the same fallback logic
+   - Stores both `choices` (display labels) and `choiceLabels` (full label objects) for backend communication
 
 #### `src/App.vue`
 
@@ -76,6 +82,11 @@ The new translations system uses the following data structure from the API endpo
 
 1. **Fixed variable naming:**
    - Replaced all instances of `store` with `chatStore` for consistency
+
+2. **Enhanced choice handling:**
+   - Modified `handleSendMessageFromChoice()` to use `labelText` for backend communication
+   - Added fallback to old switch statement if `labelText` is not available
+   - Template now passes `choiceLabels` to the click handler
 
 ### 3. Fallback Logic
 

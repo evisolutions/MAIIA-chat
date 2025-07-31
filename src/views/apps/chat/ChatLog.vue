@@ -39,23 +39,30 @@ const msgGroups = computed(() => {
   }, []);
 });
 
-const handleSendMessageFromChoice = (message) => {
+const handleSendMessageFromChoice = (message, choiceLabels = []) => {
   selectedChoice.value = message;
 
   let msg = "";
 
-  switch (message) {
-    case "Sadržaji hotela":
-      msg = "Reci mi nešto više o sadržajima hotela";
-      break;
-    case "Sobe":
-      msg = "Reci mi nešto više o sobama";
-      break;
-    case "Restoran":
-      msg = "Reci mi nešto više o restoranu";
-      break;
-    default:
-      msg = message;
+  // Try to find the labelText for the clicked choice
+  const choiceLabel = choiceLabels.find(label => label.label === message);
+  if (choiceLabel && choiceLabel.labelText) {
+    msg = choiceLabel.labelText;
+  } else {
+    // Fallback to old switch statement
+    switch (message) {
+      case "Sadržaji hotela":
+        msg = "Reci mi nešto više o sadržajima hotela";
+        break;
+      case "Sobe":
+        msg = "Reci mi nešto više o sobama";
+        break;
+      case "Restoran":
+        msg = "Reci mi nešto više o restoranu";
+        break;
+      default:
+        msg = message;
+    }
   }
 
   emit("send-message", msg);
@@ -243,7 +250,7 @@ onUnmounted(() => {
             <VChip
               v-for="(choice, index) in msgData.choices"
               :key="index"
-              @click="handleSendMessageFromChoice(choice)"
+              @click="handleSendMessageFromChoice(choice, msgData.choiceLabels)"
               :variant="choice === selectedChoice ? 'elevated' : 'outlined'"
               class="cursor-pointer text-wrap chip-choice py-1"
               :class="{ 'chip-choice-selected': choice === selectedChoice }"

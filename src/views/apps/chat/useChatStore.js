@@ -242,16 +242,16 @@ export const useChatStore = defineStore("chat", {
       let welcomeText = "";
       let choices = [];
       
-      if (this.property?.translations?.websiteAddon?.[currentLocale]) {
-        // Use new translations system
-        const translation = this.property.translations.websiteAddon[currentLocale];
-        welcomeText = translation.welcomeText || "";
-        choices = translation.labels?.map(label => label.labelText) || [];
-      } else if (this.property?.translations?.websiteAddon?.en) {
-        // Fallback to English if current locale not available
-        const translation = this.property.translations.websiteAddon.en;
-        welcomeText = translation.welcomeText || "";
-        choices = translation.labels?.map(label => label.labelText) || [];
+              if (this.property?.translations?.websiteAddon?.[currentLocale]) {
+          // Use new translations system
+          const translation = this.property.translations.websiteAddon[currentLocale];
+          welcomeText = translation.welcomeText || "";
+          choices = translation.labels?.map(label => label.label) || [];
+              } else if (this.property?.translations?.websiteAddon?.en) {
+          // Fallback to English if current locale not available
+          const translation = this.property.translations.websiteAddon.en;
+          welcomeText = translation.welcomeText || "";
+          choices = translation.labels?.map(label => label.label) || [];
       } else {
         // Fallback to old system
         welcomeText = this.property?.welcomeMessage || 
@@ -270,6 +270,8 @@ export const useChatStore = defineStore("chat", {
             createdAt: new Date(),
             messageId: 1,
             choices: choices,
+            choiceLabels: this.property?.translations?.websiteAddon?.[currentLocale]?.labels || 
+                         this.property?.translations?.websiteAddon?.en?.labels || [],
             initialOptions: true,
           },
         ],
@@ -287,11 +289,11 @@ export const useChatStore = defineStore("chat", {
         if (this.property?.translations?.websiteAddon?.[currentLocale]) {
           const translation = this.property.translations.websiteAddon[currentLocale];
           welcomeText = translation.welcomeText || "";
-          choices = translation.labels?.map(label => label.labelText) || [];
+          choices = translation.labels?.map(label => label.label) || [];
         } else if (this.property?.translations?.websiteAddon?.en) {
           const translation = this.property.translations.websiteAddon.en;
           welcomeText = translation.welcomeText || "";
-          choices = translation.labels?.map(label => label.labelText) || [];
+          choices = translation.labels?.map(label => label.label) || [];
         } else {
           welcomeText = this.property?.welcomeMessage || 
             `Zdravo ja sam ${this.property?.botName || "AI Assistant"}. Kako mogu danas da vam pomognem?`;
@@ -303,6 +305,8 @@ export const useChatStore = defineStore("chat", {
         // Update the first message
         this.activeChat.messages[0].text = welcomeText;
         this.activeChat.messages[0].choices = choices;
+        this.activeChat.messages[0].choiceLabels = this.property?.translations?.websiteAddon?.[currentLocale]?.labels || 
+                                                  this.property?.translations?.websiteAddon?.en?.labels || [];
       }
     }
   },
