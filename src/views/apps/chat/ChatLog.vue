@@ -7,7 +7,7 @@ import Carousel from "./Carousel.vue";
 
 const emit = defineEmits(["send-message"]);
 
-const store = useChatStore();
+const chatStore = useChatStore();
 const chatLogRef = ref(null);
 
 const chatAssistantId = 1;
@@ -23,9 +23,9 @@ let stringInterval = null;
 let dotInterval = null;
 
 const msgGroups = computed(() => {
-  if (!store.activeChat || !store.activeChat.messages) return [];
+  if (!chatStore.activeChat || !chatStore.activeChat.messages) return [];
 
-  return store.activeChat.messages.reduce((groups, msg) => {
+  return chatStore.activeChat.messages.reduce((groups, msg) => {
     const lastGroup = groups[groups.length - 1];
     if (lastGroup && lastGroup.senderId === msg.senderId) {
       lastGroup.messages.push(msg);
@@ -70,7 +70,7 @@ const scrollToBottom = () => {
 };
 
 watch(
-  () => store.activeChat.messages,
+  () => chatStore.activeChat.messages,
   () => {
     scrollToBottom();
   },
@@ -83,7 +83,7 @@ const handleArticleClick = (article, messageId) => {
     return; // Ignore click if it was a drag
   }
 
-  store.handleStoreEvent({
+  chatStore.handleStoreEvent({
     messageId,
     articleId: article.id,
     type: "click",
@@ -95,13 +95,13 @@ const handleArticleClick = (article, messageId) => {
 };
 
 onMounted(() => {
-  if (store.loading) {
+  if (chatStore.loading) {
     startLoadingAnimation();
   }
 });
 
 watch(
-  () => store.loading,
+  () => chatStore.loading,
   (val) => {
     if (val) {
       startLoadingAnimation();
@@ -139,7 +139,7 @@ onUnmounted(() => {
   <div
     ref="chatLogRef"
     class="chat-log pa-5 pt-4 pb-0 thin-scrollbar"
-    style="overflow-y: auto; flex: 1"
+    style=" flex: 1;overflow-y: auto"
   >
     <div
       v-for="(msgGrp, index) in msgGroups"
@@ -153,7 +153,7 @@ onUnmounted(() => {
         :class="msgGrp.senderId !== chatAssistantId ? 'ms-4' : 'me-4'"
       >
         <VAvatar size="32">
-          <VImg :src="store.property?.botIconUrl" />
+          <VImg :src="chatStore.property?.botIconUrl" />
         </VAvatar>
       </div>
       <div
@@ -161,14 +161,14 @@ onUnmounted(() => {
         :class="
           msgGrp.senderId !== chatAssistantId ? 'align-end' : 'align-start'
         "
-        style="max-width: 90%"
+        style="max-inline-size: 90%"
       >
         <div
           v-if="msgGrp.senderId === chatAssistantId"
           :class="msgGrp.senderId !== chatAssistantId ? 'ms-4' : 'me-4'"
         >
-          <h4 class="mb-1" style="color: rgba(27, 32, 45, 1)">
-            {{ store.property.botName }}
+          <h4 class="mb-1" style="color: rgba(27, 32, 45, 100%)">
+            {{ chatStore.property.botName }}
           </h4>
         </div>
         <div
@@ -217,14 +217,14 @@ onUnmounted(() => {
               v-if="msgData.type === 'basic'"
               v-html="msgData.text"
               class="mb-0 pre-line"
-              style="line-height: 21px; font-size: 14px"
+              style=" font-size: 14px;line-height: 21px"
             ></p>
 
             <p
               v-if="msgData.type === 'multi-choice'"
               v-html="msgData.text"
               class="mb-0 pre-line"
-              style="line-height: 21px; font-size: 14px"
+              style=" font-size: 14px;line-height: 21px"
             ></p>
 
             <div v-if="msgData.type === 'carousel'" style="position: relative">
@@ -247,11 +247,11 @@ onUnmounted(() => {
               :variant="choice === selectedChoice ? 'elevated' : 'outlined'"
               class="cursor-pointer text-wrap chip-choice py-1"
               :class="{ 'chip-choice-selected': choice === selectedChoice }"
-              :disabled="store.loading"
+              :disabled="chatStore.loading"
               size="x-small"
               style="
-                height: fit-content !important;
                 border: 1px solid var(--v-theme-main);
+                block-size: fit-content !important;
                 color: var(--v-theme-main);
                 font-size: 12px;
               "
@@ -276,12 +276,12 @@ onUnmounted(() => {
           <p
             class=""
             style="
-              font-weight: 400;
+              color: rgba(121, 124, 123, 100%);
               font-size: 11px;
-              line-height: 10px;
+              font-weight: 400;
               letter-spacing: 0%;
-              text-align: right;
-              color: rgba(121, 124, 123, 1);
+              line-height: 10px;
+              text-align: end;
               transform: translateX(10px);
             "
           >
@@ -295,10 +295,10 @@ onUnmounted(() => {
       </div>
     </div>
     <!-- Typing animation for chat assistant -->
-    <div v-if="store.loading" class="chat-group d-flex align-start mb-8">
+    <div v-if="chatStore.loading" class="chat-group d-flex align-start mb-8">
       <div class="chat-avatar me-4">
         <VAvatar size="32">
-          <VImg :src="store.property?.botIconUrl" />
+          <VImg :src="chatStore.property?.botIconUrl" />
         </VAvatar>
       </div>
       <div class="chat-body d-inline-flex flex-column w-100 align-start">
@@ -306,17 +306,17 @@ onUnmounted(() => {
           class="chat-content text-body-1 py-2 px-4 mb-2 bg-secondary"
           style="
             border-radius: 8px;
-            background-color: rgba(242, 244, 251, 1);
+            background-color: rgba(242, 244, 251, 100%);
             box-shadow: none;
           "
         >
           <div
             style="
               position: relative;
-              min-height: 22px;
-              min-width: 120px;
               font-size: 15px;
               font-style: italic;
+              min-block-size: 22px;
+              min-inline-size: 120px;
             "
           >
             {{ $t(loadingStrings[loadingIndex])

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Translations - Hotel MAIIA</title>
+
+    <!-- Vue -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+    <!-- Vue Demi -->
+    <script src="https://unpkg.com/vue-demi@0.14.7/lib/index.iife.js"></script>
+
+    <!-- Pinia -->
+    <script src="https://unpkg.com/pinia@2.1.7/dist/pinia.iife.prod.js"></script>
+
+    <!-- Vuetify -->
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.js"></script>
+
+    <!-- Material Design Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="/dist/style.css" />
+
+    <!-- Configuration -->
+    <script>
+        window.MaiiaConfig = {
+            domain: "/dist",
+            propertyId: "15",
+            conversationType: "info",
+            zIndex: "9999",
+            theme: "light",
+        };
+    </script>
+
+    <!-- Widget Styles & Script -->
+    <script>
+        document.write(
+            '<script src="' +
+            window.MaiiaConfig.domain +
+            '/maiia-widget.umd.js"><\/script>'
+        );
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-selector {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .language-selector label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .language-selector select {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .test-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .test-info h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+
+        .test-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .test-info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <h1>Test Translations Implementation</h1>
+
+        <div class="test-info">
+            <h3>Test Instructions:</h3>
+            <ul>
+                <li>Change the language using the selector below</li>
+                <li>Click on the chat widget icon to open the chat</li>
+                <li>Observe that the welcome message and choice buttons change based on the selected language</li>
+                <li>Test both English (en) and Serbian (sr) languages</li>
+            </ul>
+        </div>
+
+        <div class="language-selector">
+            <label for="language-select">Select Language:</label>
+            <select id="language-select" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="sr">Serbian</option>
+            </select>
+        </div>
+
+        <p><strong>Current Property ID:</strong> 15 (Hotel Sunce)</p>
+        <p><strong>Expected Behavior:</strong> The chat widget should display different welcome messages and choice
+            buttons based on the selected language.</p>
+    </div>
+
+    <!-- Widget Container -->
+    <div id="app" style="position: absolute !important"></div>
+
+    <!-- Widget Initialization -->
+    <script>
+        function changeLanguage(lang) {
+            localStorage.setItem('locale', lang);
+            // Reload the page to apply the language change
+            window.location.reload();
+        }
+
+        // Set initial language
+        if (!localStorage.getItem('locale')) {
+            localStorage.setItem('locale', 'en');
+        }
+
+        // Set the select value to current language
+        document.getElementById('language-select').value = localStorage.getItem('locale');
+
+        window.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM loaded, checking for widget dependencies...");
+
+            const checkDependencies = setInterval(() => {
+                if (
+                    window.Vue &&
+                    window.VueDemi &&
+                    window.Pinia &&
+                    window.Vuetify &&
+                    window.MaiiaWidget
+                ) {
+                    clearInterval(checkDependencies);
+                    console.log("Dependencies loaded:", {
+                        Vue: window.Vue.version,
+                        VueDemi: !!window.VueDemi,
+                        Pinia: !!window.Pinia,
+                        Vuetify: !!window.Vuetify,
+                        MaiiaWidget: !!window.MaiiaWidget,
+                    });
+
+                    try {
+                        // Initialize widget with configuration
+                        const widget = window.MaiiaWidget.init("app", {
+                            theme: window.MaiiaConfig.theme,
+                            propertyId: window.MaiiaConfig.propertyId,
+                            conversationType: window.MaiiaConfig.conversationType,
+                            zIndex: window.MaiiaConfig.zIndex,
+                        });
+                        console.log("Widget initialized successfully");
+                    } catch (error) {
+                        console.error("Widget initialization error:", error);
+                    }
+                } else {
+                    console.log("Waiting for dependencies...");
+                }
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

@@ -39,7 +39,7 @@
           >
             <!-- 👉 Right content: Active Chat -->
             <div
-              v-if="store.activeChat"
+              v-if="chatStore.activeChat"
               class="d-flex flex-column h-100"
               style="flex-grow: 1"
             >
@@ -53,7 +53,7 @@
               >
                 <div class="d-flex align-center" style="flex: 1 1 0%">
                   <img
-                    :src="store.property.addOnIconUrl"
+                    :src="chatStore.property.addOnIconUrl"
                     style="aspect-ratio: 1; block-size: 44px"
                   />
                   <div
@@ -63,13 +63,14 @@
                       class="heading-3 text-dark-gray"
                       style="color: rgba(27, 32, 45, 100%)"
                     >
-                      {{ store.property.botName }}
+                      {{ chatStore.property.botName }}
                     </h3>
                     <p
                       class="text-body-2 text-gray-50"
                       style="color: rgba(27, 32, 45, 50%)"
                     >
-                      {{ $t("AI interactive assistant") }}
+                      {{ "Powered by MAIIA concierge" }}
+
                     </p>
                   </div>
 
@@ -113,7 +114,7 @@
                   density="compact"
                   class="chat-message-input"
                   :placeholder="$t('Message') + '...'"
-                  :disabled="store.loading"
+                  :disabled="chatStore.loading"
                   autocomplete="off"
                   hide-details
                   :style="chatTextFieldStyle"
@@ -143,7 +144,7 @@
         </VLayout>
         <VImg
           v-if="!(vuetifyDisplays.width.value < 480 && showChat)"
-          :src="store.property?.botIconUrl"
+          :src="chatStore.property?.botIconUrl"
           class="rounded-circle chat-btn"
           :style="botIconStyle"
           @click="() => (showChat = !showChat)"
@@ -201,7 +202,6 @@ import { themes } from "@/plugins/vuetify/theme";
 
 // composables
 const vuetifyDisplays = useDisplay();
-const store = useChatStore();
 
 // Perfect scrollbar
 const chatLogPS = ref();
@@ -227,7 +227,7 @@ const sendMessage = async () => {
     setTimeout(() => {
       scrollToBottomInChatLog();
     }, 100);
-    await store.sendMsg(msg.value);
+    await chatStore.sendMsg(msg.value);
   };
 
   await sendMessageAndScroll();
@@ -254,7 +254,7 @@ const handleSendMessageFromChoice = async (message) => {
     setTimeout(() => {
       scrollToBottomInChatLog();
     }, 100);
-    await store.sendMsg(message);
+    await chatStore.sendMsg(message);
   };
 
   await sendMessageAndScroll();
@@ -262,15 +262,24 @@ const handleSendMessageFromChoice = async (message) => {
 };
 
 onMounted(() => {
-  store.getChat();
+  chatStore.getChat();
 });
 
 watch(
-  () => store.activeChat,
+  () => chatStore.activeChat,
   () => {
     nextTick(() => {
       scrollToBottomInChatLog();
     });
+  }
+);
+
+// Watch for locale changes and update initial chat message
+watch(
+  () => locale.value,
+  () => {
+    // Update the initial chat message when language changes
+    chatStore.updateInitialChatForLanguage();
   }
 );
 
