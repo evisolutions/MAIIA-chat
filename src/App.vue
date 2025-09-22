@@ -302,8 +302,8 @@ const widgetContainerStyle = computed(() => {
       bottom: "0px",
       left: "0px",
       top: "0px",
-      width: "100vw",
-      height: "100dvh",
+      width: showChat.value ? "100vw" : "0px",
+      height: showChat.value ? "100dvh" : "0px",
       zIndex: widgetZIndex.value,
     };
   }
