@@ -6,109 +6,229 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hotel MAIIA</title>
 
-  <!-- Vue -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <!-- Single Widget Script sa deferred loading-om -->
 
-  <!-- Vue Demi -->
-  <script src="https://unpkg.com/vue-demi@0.14.7/lib/index.iife.js"></script>
-
-  <!-- Pinia -->
-  <script src="https://unpkg.com/pinia@2.1.7/dist/pinia.iife.prod.js"></script>
-
-  <!-- Vuetify -->
-  <link href="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.js"></script>
-
-  <!-- Material Design Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css" rel="stylesheet" />
-
-  <link rel="stylesheet" href="/dist/style.css" />
-
-  <!-- Configuration - These values would come from WordPress settings in the plugin -->
-  <script>
-    window.MaiiaConfig = {
-      //domain: "https://websiteaddon.maiiaconcierge.ai",
-      domain: "/dist",
-      propertyId: "15",
-      conversationType: "info",
-      zIndex: "9999",
-      theme: "light",
-    };
-  </script>
-
-  <!-- Widget Styles & Script -->
-  <script>
-    document.write(
-      '<script src="' +
-      window.MaiiaConfig.domain +
-      '/maiia-widget.umd.js"><\/script>'
-    );
-  </script>
-
-  <style>
-    #bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 9998;
-      background-size: cover;
-      background-repeat: no-repeat;
-    }
-
-    #app {
-      z-index: 9999;
-    }
-  </style>
 </head>
 
 <body>
-  <!-- Widget Container -->
-  <div id="bg"></div>
-
-  <div id="app" style="position: absolute !important"></div>
-
-  <!-- Widget Initialization -->
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      console.log("DOM loaded, checking for widget dependencies...");
-
-      const checkDependencies = setInterval(() => {
-        if (
-          window.Vue &&
-          window.VueDemi &&
-          window.Pinia &&
-          window.Vuetify &&
-          window.MaiiaWidget
-        ) {
-          clearInterval(checkDependencies);
-          console.log("Dependencies loaded:", {
-            Vue: window.Vue.version,
-            VueDemi: !!window.VueDemi,
-            Pinia: !!window.Pinia,
-            Vuetify: !!window.Vuetify,
-            MaiiaWidget: !!window.MaiiaWidget,
-          });
-
-          try {
-            // Initialize widget with configuration
-            const widget = window.MaiiaWidget.init("app", {
-              theme: window.MaiiaConfig.theme,
-              propertyId: window.MaiiaConfig.propertyId,
-              conversationType: window.MaiiaConfig.conversationType,
-              zIndex: window.MaiiaConfig.zIndex,
-            });
-            console.log("Widget initialized successfully");
-          } catch (error) {
-            console.error("Widget initialization error:", error);
-          }
-        } else {
-          console.log("Waiting for dependencies...");
-        }
-      }, 100);
-    });
-  </script>
+  <!-- App container će biti dinamički kreiran od strane widget loader-a -->
 </body>
+<script defer>
+  (function () {
+    'use strict';
+    const apiDomain = "https://websiteaddon.maiiaconcierge.ai";
+
+    // Widget konfiguracija
+    const MaiiaConfig = {
+      domain: apiDomain,
+      propertyId: "22",
+      conversationType: "info",
+      zIndex: "999999",
+      theme: "light",
+    };
+
+    // Sve zavisnosti koje treba da se učitaju
+    const dependencies = [
+      // Stilovi
+      { type: 'link', url: 'https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.css', rel: 'stylesheet' },
+      { type: 'link', url: 'https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css', rel: 'stylesheet' },
+      { type: 'link', url: `${apiDomain}/style.css`, rel: 'stylesheet' },
+      // Skripte
+      { type: 'script', url: 'https://unpkg.com/vue@3/dist/vue.global.prod.js' },
+      { type: 'script', url: 'https://unpkg.com/vue-demi@0.14.7/lib/index.iife.js' },
+      { type: 'script', url: 'https://cdn.jsdelivr.net/npm/pinia@2.1.7/dist/pinia.iife.prod.js' },
+      { type: 'script', url: 'https://cdn.jsdelivr.net/npm/vuetify@3.4.9/dist/vuetify.min.js' },
+      { type: 'script', url: `${apiDomain}/maiia-widget.umd.js` }
+    ];
+
+    let loadedDependencies = 0;
+    let isInitializing = false;
+    let initTimeout = null;
+
+    // Funkcija za dinamičko učitavanje zavisnosti
+    function loadDependency(dep) {
+      return new Promise((resolve, reject) => {
+        const element = document.createElement(dep.type === 'link' ? 'link' : 'script');
+
+        if (dep.type === 'link') {
+          element.rel = dep.rel || 'stylesheet';
+          element.href = dep.url;
+          element.onload = () => {
+            console.log(`✅ Stil učitan: ${dep.url}`);
+            resolve();
+          };
+          element.onerror = () => {
+            console.error(`❌ Greška pri učitavanju stila: ${dep.url}`);
+            reject(new Error(`Failed to load style: ${dep.url}`));
+          };
+        } else {
+          // SVE SKRIPTE SU DEFERRED - učitavaju se paralelno
+          element.src = dep.url;
+          element.defer = true; // ✅ Defer za paralelno učitavanje
+          element.async = false; // ✅ Bez async da bi defer radio pravilno
+
+          element.onload = () => {
+            console.log(`✅ Skripta učitana (deferred): ${dep.url}`);
+            resolve();
+          };
+          element.onerror = () => {
+            console.error(`❌ Greška pri učitavanju skripte (deferred): ${dep.url}`);
+            reject(new Error(`Failed to load script: ${dep.url}`));
+          };
+        }
+
+        document.head.appendChild(element);
+      });
+    }
+
+    // Kreiranje app container-a
+    function createAppContainer() {
+      if (document.getElementById('app')) {
+        console.log('ℹ️ App container već postoji');
+        return;
+      }
+
+      const appDiv = document.createElement('div');
+      appDiv.id = 'app';
+      document.body.appendChild(appDiv);
+      console.log('✅ App container kreiran');
+    }
+
+    // Provera da li su sve zavisnosti učitane i inicijalizacija widget-a
+    function checkDependenciesReady() {
+      if (isInitializing) return;
+      if (loadedDependencies < dependencies.length) return;
+
+      // Postavi timeout za inicijalizaciju (30 sekundi)
+      if (!initTimeout) {
+        initTimeout = setTimeout(() => {
+          console.error('⏰ Timeout: Widget se nije inicijalizovao u roku od 30 sekundi');
+          console.log('🔄 Pokušavam ručno inicijalizovanje...');
+
+          if (window.MaiiaWidget) {
+            try {
+              isInitializing = true;
+              const widget = window.MaiiaWidget.init("app", {
+                theme: MaiiaConfig.theme,
+                propertyId: MaiiaConfig.propertyId,
+                conversationType: MaiiaConfig.conversationType,
+                zIndex: MaiiaConfig.zIndex,
+              });
+              console.log('✅ Widget uspešno inicijalizovan nakon timeout-a');
+            } catch (error) {
+              console.error('❌ Greška pri inicijalizaciji widget-a nakon timeout-a:', error);
+            }
+          } else {
+            console.error('❌ MaiiaWidget nije dostupan čak ni nakon timeout-a');
+          }
+        }, 30000); // 30 sekundi timeout
+      }
+
+      // Proveri da li su sve zavisnosti dostupne
+      if (
+        window.Vue &&
+        window.VueDemi &&
+        window.Pinia &&
+        window.Vuetify &&
+        window.MaiiaWidget
+      ) {
+        // Očisti timeout jer su sve zavisnosti dostupne
+        if (initTimeout) {
+          clearTimeout(initTimeout);
+          initTimeout = null;
+        }
+
+        isInitializing = true;
+        console.log('🚀 Sve zavisnosti učitane, pokrećem inicijalizaciju widget-a...');
+
+        try {
+          const widget = window.MaiiaWidget.init("app", {
+            theme: MaiiaConfig.theme,
+            propertyId: MaiiaConfig.propertyId,
+            conversationType: MaiiaConfig.conversationType,
+            zIndex: MaiiaConfig.zIndex,
+          });
+          console.log('✅ Widget uspešno inicijalizovan');
+        } catch (error) {
+          console.error('❌ Greška pri inicijalizaciji widget-a:', error);
+          isInitializing = false;
+        }
+      } else {
+        console.log('⏳ Čekam zavisnosti...', {
+          Vue: !!window.Vue,
+          VueDemi: !!window.VueDemi,
+          Pinia: !!window.Pinia,
+          Vuetify: !!window.Vuetify,
+          MaiiaWidget: !!window.MaiiaWidget
+        });
+      }
+    }
+
+    // Glavna funkcija za inicijalizaciju - POKREĆE DEFERRED LOADING
+    function initWidget() {
+      console.log('🔄 Pokrećem MAIIA widget loader sa deferred loading...');
+
+      // Kreiraj app container
+      createAppContainer();
+
+      // UČITAJ SVE ZAVISNOSTI PARALELNO sa defer atributima
+      console.log('📦 Učitavam sve zavisnosti paralelno sa defer...');
+
+      const loadPromises = dependencies.map((dep, index) => {
+        // Mikro-delay da se ne zaguše mrežni zahtevi
+        setTimeout(() => {
+          return loadDependency(dep).then(() => {
+            loadedDependencies++;
+            checkDependenciesReady();
+          });
+        }, index * 50); // 50ms delay između svakog resursa
+      });
+
+      // Ako nema zavisnosti za učitavanje, odmah proveri
+      if (loadPromises.length === 0) {
+        checkDependenciesReady();
+      }
+    }
+
+    // ČEKAJ HOST SAJT - cela naša skripta se pokreće tek nakon hosta
+    if (document.readyState === 'loading') {
+      console.log('⏳ Čekam da se host stranica kompletno učita...');
+      window.addEventListener('load', () => {
+        console.log('🚀 Host stranica učitana, pokrećem widget sa deferred loading...');
+        initWidget();
+      });
+    } else {
+      // Ako je DOM već spreman, čekaj load event
+      console.log('⏳ Čekam load event...');
+      window.addEventListener('load', () => {
+        console.log('🚀 Host stranica učitana, pokrećem widget sa deferred loading...');
+        initWidget();
+      });
+    }
+
+    // Eksportuj konfiguraciju za eventualne kasnije promene
+    window.MaiiaConfig = MaiiaConfig;
+
+    // Cleanup funkcija za timeout
+    function cleanup() {
+      if (initTimeout) {
+        clearTimeout(initTimeout);
+        initTimeout = null;
+      }
+    }
+
+    // Dodaj cleanup na window beforeunload
+    window.addEventListener('beforeunload', cleanup);
+
+    // Ručna funkcija za inicijalizaciju (za debugging)
+    window.initMaiiaWidget = function () {
+      cleanup(); // Očisti prethodni timeout
+      isInitializing = false;
+      loadedDependencies = 0;
+      initWidget();
+    };
+
+  })();
+</script>
 
 </html>
