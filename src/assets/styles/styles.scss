@@ -1,23 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap';
 
 * {
-    font-family: "Inter", sans-serif !important;
+  /* font-family: Inter, sans-serif !important; */
 }
 
 .active-chat-header {
-    background-color: blue !important;
+  background-color: blue !important;
 }
 
 #app {
-    position: absolute !important;
+  position: absolute !important;
 }
 
 .v-menu.v-overlay--active {
-    z-index: 999999 !important;
+  z-index: 999999 !important;
 }
 
 .language-item .v-list-item__content {
-    display: flex;
-    align-items: start;
-    gap: 8px;
+  display: flex;
+  align-items: start;
+  gap: 8px;
 }
